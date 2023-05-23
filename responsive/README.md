@@ -31,6 +31,22 @@
     
     局限性：srcset属性只适合显示区域一样大小的图像，如果希望不同尺寸的屏幕，显示不同大小的图像
 
-- size属性：
+- size属性：不同设备的图像显示的宽度。格式为(媒体查询表达式) 图像显示的宽度，用逗号分隔开不同设备的情况；
 
-图片质量：window.devicePixelRatio，属性返回当前设备的物理像素与CSS像素的比率，可以获取图片质量是1x还是2x；
+
+    注意：size属性必须与srcset属性搭配使用，单独使用size属性是无效的；
+
+- window.devicePixelRatio属性：表示图片质量，返回当前设备的物理像素与CSS像素的比率，可以获取图片质量是1x还是2x；
+- picture标签、source标签：同时适配不同像素密度、不同大小的屏幕
+
+
+    局限性：单纯用srcset和size属性只能在不同情况下显示不同尺寸的图片
+##### 操作流程
+```
+<picture>
+  <source media="(max-width: 500px)" srcset="cat-vertical.jpg">
+  <source media="(min-width: 501px)" srcset="cat-horizontal.jpg">
+  <img src="cat.jpg" alt="cat">
+</picture>
+```
+浏览器按照source标签出现的顺序，依次判断设备是否满足媒体查询，如果满足就加载srcset属性指定的图片，并且不再执行后续的source标签和img标签
