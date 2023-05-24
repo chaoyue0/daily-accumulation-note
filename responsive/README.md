@@ -36,7 +36,8 @@
 
     注意：size属性必须与srcset属性搭配使用，单独使用size属性是无效的；
 
-- window.devicePixelRatio属性：表示图片质量，返回当前设备的物理像素与CSS像素的比率，可以获取图片质量是1x还是2x；
+- window.devicePixelRatio属性：表示图片质量，返回当前设备的物理像素与CSS像素的比率，
+  浏览器应使用多少屏幕实际像素来绘制单个CSS像素，可以获取图片质量是1x还是2x；
 - picture标签、source标签：同时适配不同像素密度、不同大小的屏幕
 
 
