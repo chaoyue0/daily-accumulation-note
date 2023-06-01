@@ -123,3 +123,27 @@
 方式：
 - JSON.parse(JSON.stringify())
 
+### Object.create
+定义：创建一个新对象，使用现有的对象来提供新创建的对象的原型；
+
+参数：
+- proto： 新创建对象的原型对象
+- propertiesObject(可选)： 指定要添加到新对象上的可枚举属性的描述符以及相应的属性名称；
+
+### Object.defineProperty
+定义：在一个对象上定义一个新属性或修改现有属性并返回此对象，可以定义或者修改属性的描述符，精确地添加或修改对象上的属性；
+
+参数：
+- obj： 定义属性的对象
+- prop： 要定义或修改的属性键
+- descriptor： 定义或修改的属性描述符
+
+数据描述符：
+- configurable： 表示属性不可更改且不可删除
+- enumerable： 表示属性是否可枚举
+- value： 与属性相关联的值
+- writable： 表示value是否可以赋值运算符更改
+
+访问器描述符：
+- get： 访问该属性时，调用get函数
+- set： 该属性被赋值时，调用set函数
