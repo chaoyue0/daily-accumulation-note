@@ -55,3 +55,50 @@ const keys = Object.keys(obj)
     }
 }
 ````
+
+### 依赖关系
+
+#### Dep类
+定义：Dep实例是用于管理依赖关系的对象，它与每个响应式对象的属性或数组元素相关联，
+每个响应式对象的属性或数组元素都会对应一个独立的Dep实例；
+
+作用：存放 Watcher 观察者对象，建立观察者与被观察者之间的关联；
+
+Dep是一个发布者，可以订阅多个观察者，依赖收集之后Dep中会存在一个或多个Watcher对象，
+在数据变更的时候通知所有的Watcher；
+
+#### 属性或元素处理过程
+
+当属性或元素被读取时，触发其getter方法，相关的Dep实例会被存储到全局target变量中，
+以建立起观察者与被观察者之间的关联关系，然后Dep实例会将target添加到自身的订阅者列表中；
+
+```allykeynamelanguage
+ depend () {
+ //依赖收集
+    if (Dep.target) {
+      Dep.target.addDep(this)
+    }
+  }
+```
+
+当属性或元素被修改时，触发其setter方法，相关的Dep实例会遍历订阅者列表，通知每个订阅者进行更新操作；
+
+```allykeynamelanguage
+ notify () {
+ //通知所有订阅者
+    const subs = this.subs.slice()
+    for (let i = 0, l = subs.length; i < l; i++) {
+      subs[i].update()
+    }
+  }
+```
+    注：为什么要使用slice进行浅拷贝？
+    浅拷贝的目的不会为了避免相互影响，而是避免在遍历过程中对原始订阅列表subs进行修改
+
+防止重复添加依赖关系，比如在getter方法中再次访问了响应式属性。
+在依赖收集过程中使用Dep.target来跟踪当前的观察者对象
+
+
+```allykeynamelanguage
+Dep.target = null
+```
