@@ -132,3 +132,49 @@ class MyClass {
 
 #### TypeScript
 在Ts中有访问修饰符`private`来声明私有变量和方法，保证只能在类的内部可以访问私有成员，外部无法直接访问
+
+
+#### Symbol
+symbol()函数返回的symbol值是唯一的，且能够作为对象属性的唯一标示符，可以用来实现类私有变量
+```allykeynamelanguage
+const MyObject = (function() {
+     let _value = Symbol('value')
+     let _value2 = Symbol('value')
+     _value == _value2   // false
+     
+     class MyObject {
+         constructor() {
+             this[_value] = 123
+         }
+         
+         getValue() {
+             return this[_value]
+         }
+
+         setValue(newValue) {
+             this[_value] = newValue
+         }
+     }
+     
+     return MyObject
+ })()
+```
+
+#### 模块模式
+为单例创建私有变量和特权方法，所谓单例，指的就是只有一个实例的对象，以`对象字面量`的方式来创建单例对象
+
+```allykeynamelanguage
+const singleton = function() {
+let value = 123
+
+return {
+// 其他公有属性
+getValue() {
+return value
+},
+setValue(newValue) {
+value = newValue
+}
+}
+}()
+```
