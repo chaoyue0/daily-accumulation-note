@@ -1,5 +1,6 @@
-## JavaScript
+# JavaScript
 
+## 函数表达式
 ### 执行环境
 
 定义：包含当前正在执行的代码、所使用的变量和函数，以及相关的作用域信息。可以理解为代码执行的上下文，
@@ -178,3 +179,45 @@ value = newValue
 }
 }()
 ```
+
+## BOM
+### Window对象
+#### frame框架
+```allykeynamelanguage
+<frameset cols="50%,50%">
+   <frame src="red.htm" name="redFrame">
+   <frame src="blue.htm" name="blueFrame">
+</frameset>
+```
+
+- 页面包含多个框架的情况下，每个框架都有自己的window对象或Global对象
+- top对象始终指向最高曾的框架
+- 不同frame之间使用postMessage方法实现跨域通信
+- 不同frame都有自己的渲染上下文，但实际上在同一个主线程中执行
+
+#### 窗口
+##### 窗口距离屏幕的偏移量
+
+- window.screenLeft：表示窗口左边缘距离屏幕左边缘的偏移量(火狐浏览器不支持)
+- window.screenTop：表示窗口顶部边缘距离屏幕顶部边缘的偏移量(火狐浏览器不支持)
+- window.screenX：(IE浏览器不支持)
+- window.screenY：(IE浏览器不支持)
+
+```allykeynamelanguage
+如果外接显示器，存在有个显示器的情况，需要考虑多个显示器的布局位置
+```
+
+#### 窗口的偏移量
+
+- window.moveTo(x,y)：将窗口移动到(x,y)处
+- window.moveBy(x,y)：将窗口在横坐标移动x，纵坐标移动y
+
+#### 窗口的大小
+- window.innerWidth：表示浏览器窗口内部可见区域的宽度
+- window.innerHeight：表示浏览器窗口内部可见区域的高度
+- window.outerWidth：表示浏览器窗口的宽度，包括边框、滚动条等
+- window.outerHeight：表示浏览器窗口的高度，包括边框、滚动条等
+
+#### 窗口大小的调整
+- window.resizeTo(a,b)：将窗口的大小调整到a x b尺寸
+- window.resizeBy(a,b)：在现有窗口的大小下将窗口的大小扩大或者缩小
