@@ -233,10 +233,6 @@ value = newValue
 ##### 窗口弹出
 window.open(url,窗口目标,特性字符串)
 
-
-
-
-
 #### 间歇调用和超时调用
 原理：定时器属于异步任务，定时器里面的执行代码属于异步代码，这里的代码不会立即执行，需要等待队列为空，并达到规定的延时时间才会执行
 
@@ -251,3 +247,31 @@ setTimeout(要执行的代码,毫秒时间),调用setTimeout之后，该方法�
 
 setInterval()，参数与setTimeout相同
 
+#### 系统对话框
+- alert('提示性文字')
+- confirm('提示性文字'),返回布尔值，表示用户点击的是确认还是取消
+- prompt('文本提示','文本框默认值'),点击取消返回null
+- window.print()：显示打印对话框，异步显示的，对话框计数器不会将他们计算在内，因此不会受到用户禁用后续对话框显示的影响
+- window.find()：显示查找对话框，也是异步显示的
+
+### location对象
+window和document的location属性引用的都是同一个对象，可以访问到URL
+
+- hash：返回hash值，#号后跟着的字符串
+- host：返回服务器名称和端口号
+- port：返回端口号
+- hostname：返回服务器名称
+- href：返回完成的URL
+- protocol：返回协议
+- search：返回URL的查询字符串，以问号开头
+
+注：每次修改location属性后(hash除外)，页面都会以新URL重新加载
+
+#### 位置操作
+前进：location.assign(url)：立即打开新URL并在浏览器的历史记录中生成一条记录，可以通过点击后退导航到前一个页面
+
+    window.location = url 和 location.href = url 与上述API具有相同的效果
+
+前进：如果要禁用"后退"行为，可以用location.replace(url)方法，用户不能回到前一个页面
+
+加载：location.reload()，重新加载当前显示的页面，不传参数可能从缓存中加载，传递参数true表示从服务器重新加载
