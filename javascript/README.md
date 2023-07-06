@@ -275,3 +275,23 @@ window和document的location属性引用的都是同一个对象，可以访问�
 前进：如果要禁用"后退"行为，可以用location.replace(url)方法，用户不能回到前一个页面
 
 加载：location.reload()，重新加载当前显示的页面，不传参数可能从缓存中加载，传递参数true表示从服务器重新加载
+
+### navigator对象
+常用于检测网页的浏览器类型
+
+#### 检测插件
+navigator.plugins
+
+### screen对象
+
+- availHeight：减去系统部件高度之后的值，表示可用高度，只读
+- availWidth：减去系统部件宽度之后的值，表示可用宽度，只读
+- 
+### history对象
+
+- go(x)：正数表示前进，负数表示后退，字符串表示跳转到最近的特定页面
+- back()：表示后退一页
+- forward()：表示前进一页
+- length属性：表示所有历史记录，第一个页面length等于0
+
+## 客户端检测
