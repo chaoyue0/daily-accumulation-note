@@ -348,3 +348,40 @@ navigator.plugins
 - insertBefore：在列表的指定位置插入节点，接受两个参数，插入的节点和插入的位置
 - replaceChild：替换节点，接受两个参数，插入的节点和要替换的节点，被替换的节点仍然在文档中，但是在文档中已经没有自己的位置了
 - removeChild：接受一个参数，就是要移除的节点，返回该移除节点
+- cloneNode：接受一个布尔值参数，表示是否执行深复制，深复制就是复制节点及其整个子节点树，复制后返回的节点副本属于文档所有，并没有为它指定父节点
+- normalize：无参数，表示将当前节点和它的后代节点"规范化"，不存在一个空的文本节点，或者两个相邻的文本节点
+
+#### Document
+document对象是继承自Document类型的是一个实例，表示整个HTML页面，属于window对象的一个属性
+
+特点：
+
+- nodeType值为9
+- nodeName值为'#document'
+- nodeValue值为null
+- parentNode值为null
+
+##### 文档的子节点
+
+- documentElement属性：可以访问到HTML页面中的html元素
+- childNode列表：可以通过下标索引访问到文档元素
+- body：访问到body元素
+
+##### 文档信息
+
+- title：页面的标题
+- url：地址栏中显示的url地址
+- domain：只包含页面的域名，可以修改，但是不能将这个属性设置为url中不包含的域。有一个限制，一开始是'松散的'就不能再设置为'紧绷的'，否则会导致错误
+
+```allykeynamelanguage
+//假设页面来自于 p2p.wrox.com 域
+document.domain = "wrox.com"; //松散的(成功)
+document.domain = "p2p.wrox.com"; //紧绷的(出错!)
+
+```
+- referrer：保存链接到当前页面的那个源页面的URL地址，没有源页面的情况下，返回空字符串
+
+##### 查找元素
+
+- getElementById：接受一个参数，元素的id。如果多个元素的id相同，则返回文档中第一次出现的元素
+- getElementsByTagName：接受一个参数，元素的标签名，返回的是NodeList集合，该集合有namedItem方法，可以通过元素的name获取到元素
