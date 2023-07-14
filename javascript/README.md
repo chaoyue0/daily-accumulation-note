@@ -317,7 +317,7 @@ navigator.plugins
 
 ## DOM
 ### DOM1
-#### Node接口
+#### Node
 定义：js中所有节点类型都继承自Node类型，因此所有的节点类型都共享相同的属性和方法
 
 ##### NodeType节点类型
@@ -349,7 +349,7 @@ navigator.plugins
 - replaceChild：替换节点，接受两个参数，插入的节点和要替换的节点，被替换的节点仍然在文档中，但是在文档中已经没有自己的位置了
 - removeChild：接受一个参数，就是要移除的节点，返回该移除节点
 - cloneNode：接受一个布尔值参数，表示是否执行深复制，深复制就是复制节点及其整个子节点树，复制后返回的节点副本属于文档所有，并没有为它指定父节点
-- normalize：无参数，表示将当前节点和它的后代节点"规范化"，不存在一个空的文本节点，或者两个相邻的文本节点
+- normalize：无参数，表示将当前节点和它的后代节点"规范化"，不存在一个空的文本节点，或者两个相邻的文
 
 #### Document
 document对象是继承自Document类型的是一个实例，表示整个HTML页面，属于window对象的一个属性
@@ -385,3 +385,34 @@ document.domain = "p2p.wrox.com"; //紧绷的(出错!)
 
 - getElementById：接受一个参数，元素的id。如果多个元素的id相同，则返回文档中第一次出现的元素
 - getElementsByTagName：接受一个参数，元素的标签名，返回的是NodeList集合，该集合有namedItem方法，可以通过元素的name获取到元素
+
+##### 文档写入
+
+- write()：输出的任何HTML代码都能被处理，也可以动态引入外部资源，如js文件，</script>需要将/进行\转义
+- writeln()：在write的字符串的末尾添加一个换行符(\n)
+- open()：当write在页面加载后调用，会自动调用open方法
+- close()：与open方法成对出现
+
+#### Element
+特征：
+
+- nodeType的值为1
+- nodeName的值为元素的标签名
+- nodeValue的值为null
+- parentNode可能是Document或Element
+
+注：element.tagName表示输出标签名，但是在HTML中标签名始终以全部大写表示，而在XML中标签名与源代码保持一致
+```allykeynamelanguage
+element.tagName.toLowerCase() == "div"
+```
+
+##### HTML元素
+所有的HTML元素都是由HTMLElement类型或者它的子类型表示
+
+处理元素的特性：
+
+- getAttribute：根据元素标签上特性的key值获取该key值对应的value，包括自定义特性，大小写不敏感，值总是字符串形式。通常只有在取自定义特征的情况下，才会使用getAttribute方法
+    - style：通过getAttribute访问，返回的是css文本；通过属性访问，返回的是一个对象
+    - onclick：通过getAttribute访问，返回的是相应代码的字符串；通过属性访问，返回集合js函数
+- setAttribute：接受两个参数，特征名和值，该方法设置的特征名会统一转成小写形式
+- removeAttribute：接受一个参数，特征名
