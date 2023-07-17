@@ -416,3 +416,45 @@ element.tagName.toLowerCase() == "div"
     - onclick：通过getAttribute访问，返回的是相应代码的字符串；通过属性访问，返回集合js函数
 - setAttribute：接受两个参数，特征名和值，该方法设置的特征名会统一转成小写形式
 - removeAttribute：接受一个参数，特征名
+- createElement：接受一个参数，要创建元素的标签名
+
+
+
+#### Text
+
+- nodeType值为3
+- nodeValue值为节点所包含的文本
+- parentNode是一个Element
+- 没有子节点
+
+处理文本节点
+
+- appendData(text)：将text添加到节点的末尾
+- deleteData(offset,count)：从offset指定位置开始删除count个字符
+- insertData(offset,text)：在offset指定的位置插入text
+- replaceData(offset,count,text)：用text替换在offset位置开始到offset+count位置的元素
+- splitText(offset)：从offset指定的位置将当前文本节点分成两个文本节点
+- substringData(offset,count)：提取offset位置开始到offset+count位置的元素
+
+#### Attr
+
+- nodeType的值为2
+- nodeName的值为特征的名称
+- nodeValue的值为特征的值
+- parentNode的值为null
+- 没有子节点
+
+处理属性节点
+
+- getAttribute(key)
+- setAttribute(key,value)
+- removeAttribute(key)
+
+#### DOM操作技术
+##### 动态脚本
+定义：值的是页面加载时不存在，但将来的某个时刻通过修改DOM动态添加的脚本
+
+创建方式：
+
+- 插入外部文件
+- 直接插入JS代码
