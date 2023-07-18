@@ -458,3 +458,40 @@ element.tagName.toLowerCase() == "div"
 
 - 插入外部文件
 - 直接插入JS代码
+
+##### 动态样式
+定义：将css样式包含到html页面中
+
+创建方式：
+
+- link引入式css
+- style嵌入式css
+
+注：加载外部样式文件的过程是异步的，与js代码的执行没有固定的次序
+
+##### 操作表格
+
+table子标签：
+
+- caption：常作为table标签的第一个子元素出现，表示表格的标题
+- thead：定义一组表格行的列头
+- tbody：封装了一系列表格的行，作为表格的主体
+- tfoot：定义一组表格列的汇总行
+
+table属性：
+
+- rows：一个表格中所有行的HTMLCollection
+
+table方法：
+
+- createXXX：XXX为子标签名，表示创建元素
+- deleteXXX：XXX为子标签名，表示删除元素
+- deleteRow(x)：删除指定位置的行
+- insertRow(x)：在rows集合中指定位置插入一行
+
+##### NodeList
+NodeList、NameNodeMap、HTMLCollection三者都是动态的集合，每当文档发生变化，它们都会得到更新
+
+涉及DOM对性能的影响，NodeList这类动态的对象，意味着每次访问NodeList对象，都会运行一次查询，因此尽可能减少DOM操作
+
+    所有NodeList对象都是在访问DOM文档时实时运行的查询
