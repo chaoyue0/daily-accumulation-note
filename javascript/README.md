@@ -495,3 +495,75 @@ NodeList、NameNodeMap、HTMLCollection三者都是动态的集合，每当文�
 涉及DOM对性能的影响，NodeList这类动态的对象，意味着每次访问NodeList对象，都会运行一次查询，因此尽可能减少DOM操作
 
     所有NodeList对象都是在访问DOM文档时实时运行的查询
+
+### DOM扩展
+主要的扩展内容是`选择符API`和`HTML5`
+
+#### 选择符API
+
+- querySelector：接受一个参数，css选择器，返回与该模式匹配的第一个元素，否则返回null
+- querySelectorAll：返回NodeList的实例，否则返回空，底层实现类似一组元素的快照，而非不断对文档进行搜索的动态查询
+
+要取得NodeList中的每一个元素，可以使用item()方法，也可以使用方括号下标语法
+```allykeynamelanguage
+for (i=0, len=strongs.length; i < len; i++){
+    strong = strongs[i]; //或者 strongs.item(i)
+}
+```
+
+- matchesSelector / matches：接受一个参数，css选择器，如果元素被指定的选择器选择则返回true，否则返回false
+```allykeynamelanguage
+let result = element.matches(selectorString);
+```
+
+#### 元素遍历
+新增属性：
+
+- childElementCount：返回子元素的个数，不包含文本节点和注释
+- firstElementChild：指向第一个子元素
+- lastElementChild：指向最后一个子元素
+- previousElementSibling：指向前一个兄弟元素
+- nextElementSibling：指向后一个兄弟元素
+
+#### HTML5
+##### 与类相关的补充
+
+- getElementsByClassName方法
+
+接受一个参数，即包含一或多个类名的字符串，返回NodeList，和getElementsByTagName以及其他返回NodeList的DOM方法一样具有同样的性能问题
+
+- classList属性
+
+可以通过className属性进行添加、删除和替换类名，由于className是一个字符串，即使只修改部分字符串，也必须设置整个字符串的值。
+classList属性是新集合类型`DOMTokenList实例`，有length属性，要取得每个元素可以使用item方法或方括号语法，
+
+新的方法：
+
+1、add：将给定的字符串值添加到列表中，若值已经存在就不添加
+
+2、contains：判断列表中是否存在给定的值，存在返回true，否则返回false
+
+3、remove：从列表中删除给定的字符串
+
+4、toggle：如果列表中存在给定值删除它，如果不存在给定值添加他
+
+
+
+##### 焦点管理
+元素获取焦点的方式：
+
+- 页面加载
+- 用户输入(Tab键)
+- 在代码中使用focus()
+
+引用DOM中当前获取了焦点的元素：document.activeElement
+
+    默认情况下，文档刚刚加载完成时，document.activeElement返回的是document.body元素，文档加载期间，document.activeElement返回的是null
+
+判断文档是否获得了焦点：document.hasFocus
+
+    通过检查文档是否获得了焦点，可以知道用户与页面的交互情况
+
+
+
+##### HTMLDocument的变化
