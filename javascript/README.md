@@ -567,3 +567,49 @@ classList属性是新集合类型`DOMTokenList实例`，有length属性，要取
 
 
 ##### HTMLDocument的变化
+
+- readyState属性：表示文档是否加载完成，两个属性值loading表示正在加载文档，complete表示已经加载完文档
+- compatMode属性：表示浏览器采用的渲染模式，两个属性值CSS1Compat表示标准模式，BackCompat表示混杂模式
+- head属性：引用文档的head元素
+
+##### 字符集属性
+
+- charset属性：表示文档中实际使用的字符集，可以直接通过charset属性修改这个值
+
+##### 自定义数据属性
+HTML5规定可以为元素添加非标准属性，但必须添加前缀`data-`，目的是为元素提供与渲染无关的信息，或提供语义信息
+
+dataset属性：可以访问自定义数据属性，是一组键值对的映射形式
+
+##### 插入标记
+
+- innerHTML属性：在读模式下，返回从对象的起始位置到终止位置的全部内容,不包括标签；在写模式下，该属性会根据指定的值创建相信的DOM树
+
+限制：
+1、通过innerHTMl插入script元素并不会执行其中的脚本
+
+2、不支持innerHTML的元素：col、head、html、style、table、title
+
+- outerHTML属性：在读模式下，该属性会返回调用它的元素及所有子节点的HTML标签，包括标签本身；在写模式下，该属性会创建新的DOM树，用新DOM树替换原先的所有子节点
+- insertAdjacentHTML()方法：接受两个参数，插入位置和要插入的HTML文本
+
+插入位置：
+
+1、beforebegin：在当前元素之前插入一个紧邻的兄弟节点
+
+2、afterbegin：在当前元素之下插入一个新的子元素或在第一个子元素之前插入一个新的子元素
+
+3、beforeend：在当前元素之下插入一个新的子元素或在最后一个子元素之后插入一个新的子元素
+
+4、afterend：在当前元素之后插入一个紧邻的兄弟节点
+
+##### 页面滚动
+
+scrollIntoView()方法：通过滚动浏览器窗口或某个容器元素，调用元素出现在视口中。
+
+接受两个参数，均可选：
+
+- alignToTop：布尔值，如果true表示元素的顶端将和它所在的滚动区域的顶端对齐，如果是false表示元素的底端与所在滚动区域的底端对齐
+- scrollIntoViewOptions：对象，behavior属性定义动画过度效果auto或smooth，block属性定义垂直方向的对齐，inline属性定义水平方向的对齐
+
+#### 专有扩展
