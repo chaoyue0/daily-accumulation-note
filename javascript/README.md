@@ -583,7 +583,7 @@ dataset属性：可以访问自定义数据属性，是一组键值对的映射�
 
 ##### 插入标记
 
-- innerHTML属性：在读模式下，返回从对象的起始位置到终止位置的全部内容,不包括标签；在写模式下，该属性会根据指定的值创建相信的DOM树
+- innerHTML属性：在读模式下，返回从对象的起始位置到终止位置的全部内容,不包括标签；在写模式下，该属性会根据指定的值创建新的DOM树
 
 限制：
 1、通过innerHTMl插入script元素并不会执行其中的脚本
@@ -613,3 +613,35 @@ scrollIntoView()方法：通过滚动浏览器窗口或某个容器元素，调�
 - scrollIntoViewOptions：对象，behavior属性定义动画过度效果auto或smooth，block属性定义垂直方向的对齐，inline属性定义水平方向的对齐
 
 #### 专有扩展
+##### children属性
+定义：是HTMLCollection的实例，包含元素中同样还是元素的子节点
+
+##### contains方法
+定义：用来判断某个节点是不是另一个节点的后代，不需要通过在DOM文档树中查找。调用该方法的是祖先节点，接受的参数是要检测的节点
+
+##### 插入文本
+
+- innerText：操作元素中包含的`所有`文本内容，包含子文档书中的文本。对于HTML语法字符(&、<b>)会进行编码
+  - 读取值：按照由浅入深的顺序，将子文档树中的所有文本拼接起来
+  - 写入值：删除元素的所有子节点，插入包含相应文本值的文本节点
+
+设置innerText永远只会生成当前节点的一个子文本节点，为了确保只生成一个子文本节点，必须对文本进行HTML编码
+
+通过innerText属性过滤吊HTML标签
+```allykeynamelanguage
+div.innerText = div.innerText;
+```
+
+- outerText：除了作用范围扩大到了包含调用它的节点之外，outerText和innerText基本上没有区别
+
+##### 滚动
+HTMLElement类型的拓展，所有元素中都可以调用
+
+- scrollIntoViewIfNeeded：只在当前元素在视口中不可见的情况下，才滚动浏览器窗口，最终让它可见。如果参数设置为true，则表示尽可能让元素在视口垂直居中
+- scrollByLines：参数可以是正值，也可以是负值，比如1表示页面主题滚动1行，表示将元素的内容滚动指定的行高，`其中一行的高度通常由元素内文本的字体大小和行高(line-height)来决定`
+- scrollByPages：参数可以是正值，也可以是负值，比如1表示页面主题滚动1页，表示当前文档页面按照指定的页数翻页
+
+注意点：
+    
+    scrollIntoViewIfNeeded的作用对象是元素的容器，scrollByLines和scrollByPages影响的是元素本身
+    scrollIntoViewIfNeeded、scrollByLines、scrollByPages在Safari和Chromo浏览器中生效
