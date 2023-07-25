@@ -645,3 +645,58 @@ HTMLElement类型的拓展，所有元素中都可以调用
     
     scrollIntoViewIfNeeded的作用对象是元素的容器，scrollByLines和scrollByPages影响的是元素本身
     scrollIntoViewIfNeeded、scrollByLines、scrollByPages在Safari和Chromo浏览器中生效
+
+### DOM2和DOM3
+判断浏览器是否支持DOM模块
+```allykeynamelanguage
+document.implementation.hasFeature("Core", "2.0");
+```
+#### DOM变化
+##### XML命名空间
+有了XML命名空间，不同XML文档的元素可以混在一起使用，不用担心命名冲突，命名空间使用xmlns特性来指定
+
+```allykeynamelanguage
+<xhtml:html xmlns:xhtml="http://www.w3.org/1999/xhtml">
+        <xhtml:head>
+            <xhtml:title>Example XHTML page</xhtml:title>
+        </xhtml:head>
+        <xhtml:body xhtml:class="home">
+            Hello world!
+        </xhtml:body>
+</xhtml:html>
+```
+
+1、Node类型的变化
+
+与命名空间相关的属性(DOM2)：
+
+- localName：不带命名空间前缀的节点名称
+- namespaceURI：命名空间URI(表示元素或属性所在的命名空间的唯一标识符)，未指定的话返回null
+- prefix：命名空间前缀，未指定的话返回null
+
+与命名空间相关的方法(DOM3)：
+
+- isDefaultNamespace(namespaceURI)：在指定的 namespaceURI 是当前节点的默认命名空间的情况下返回 true
+- lookupNamespaceURI(prefix)：返回给定 prefix 的命名空间
+- lookupPrefix(namespaceURI)：返回给定 namespaceURI 的前缀
+
+2、Document类型的变化
+
+与命名空间相关的方法(DOM2)：
+
+- createElementNS(namespaceURI，tagName)：使用给定的tagName创建一个属于命名空间namespaceURI的新元素
+- createAttributeNS(namespaceURI，attributeName)：使用给定的attributeName创建一个属于命名空间namespaceURI的新元素
+- getElementsByTagNameNS(namespaceURI，tagName)：返回属于命名空间namespaceURI的tagName元素的NodeList
+
+3、Element类型的变化
+
+- getAttributeNS(namespaceURI,localName)：取得属于命名空间且名为localName的特性
+- getAttributeNodeNS(namespaceURI,localName)：取得属于命名空间且名为localName的特性节点
+- getElementsByTagNameNS(namespaceURI,tagName)：返回属于命名空间的tagName元素的NodeList
+- hasAttributeNS(namespaceURI,localName)：确定当前元素是否有一个名为localName的特性
+- removeAttributeNS(namespaceURI,localName)：删除属于命名空间且名为localName的特性
+- setAttributeNS(namespaceURI,qualifiedName,value)：设置属于命名空间且名为qualifiedName的特性的值为value
+
+除了第一个参数之外，其他的参数与DOM1中的方法相同
+
+##### 其他方面的变化
