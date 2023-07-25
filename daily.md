@@ -147,3 +147,13 @@
 访问器描述符：
 - get： 访问该属性时，调用get函数
 - set： 该属性被赋值时，调用set函数
+
+
+### Object.getOwnPropertyNames
+定义：接受参数是一个对象，返回一个数组，包含给定对象所有自有属性(包含不可枚举属性，但不包括使用symbol值作为名称的属性以及原型链上的属性)
+
+注意：非对象参数会被强制转换为对象
+```allykeynamelanguage
+Object.getOwnPropertyNames("foo");
+// ["0", "1", "2", "length"] 
+```

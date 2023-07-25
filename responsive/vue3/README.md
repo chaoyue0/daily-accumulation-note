@@ -44,3 +44,13 @@ const proxy = new Proxy(
 - IS_REF = '__v_isRef'： 用于检测对象是否为 ref 对象的标记
 - UNWRAP_REF = '__v_unwrapRef'： 用于获取 ref 对象的原始值的标记
 - IS_PROXY = '__v_isProxy'： 用于检测对象是否为代理对象的标记
+
+### 第三层 baseHandlers
+#### createGetter
+两个参数，均为布尔值：isReadonly、shallow，默认都为false
+
+封装了get方法,该方法用于拦截对象的读取属性操作，三个参数：target(目标对象)、property(被劫持的属性名)、receiver(Proxy)
+
+1、判断劫持的属性是否已经是响应式、可读性、浅响应式
+
+2、判断代理的receiver是否为原始对象，再根据代理对象是否只读以及是否是浅层代理，获取当前代理对象所对应的原始对象与receiver进行对比
