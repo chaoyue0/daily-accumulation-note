@@ -46,6 +46,9 @@ const proxy = new Proxy(
 - IS_PROXY = '__v_isProxy'： 用于检测对象是否为代理对象的标记
 
 ### 第三层 baseHandlers
+#### createArrayInstrumentations
+劫持Array的一些方法
+
 #### createGetter
 两个参数，均为布尔值：isReadonly、shallow，默认都为false
 
