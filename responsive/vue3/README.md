@@ -47,7 +47,33 @@ const proxy = new Proxy(
 
 ### 第三层 baseHandlers
 #### createArrayInstrumentations
-劫持Array的一些方法
+定义：用于劫持Array方法的函数，主要包含两部分逻辑，分别针对某些Array方法进行劫持
+```allykeynamelanguage
+const instrumentations: Record<string, Function> = {}
+```
+##### 劫持改变数组长度的方法(push\pop\shift\unshift\splice)
+在调用原始Array方法之前`暂停依赖收集pauseTracking`，然后运用原始方法，最后`重新启动依赖收集resetTracking`。这是为了避免在改变数组长度时
+引起无限循环的问题
+
+无限循环问题
+
+1、Vue3的响应式系统会在改变数组长度时触发`依赖更新`(这是为了确保数据的变化能够得到及时的响应从而更新视图)
+
+2、导致数组长度变化，这些数组方法也可能会在响应式更新的过程中被`重新调用`(这是为了获取最新值)
+
+3、调用这些方法会触发`新的依赖更新`，如此循环
+
+- 暂停依赖收集pauseTracking：在调用方法之前，先调用pauseTracking方法暂停依赖收集，这样数组改变时不会触发依赖更新，避免无限循环问题
+- 重新启动依赖收集resetTracking：在调用方法之后，再调用resetTracking方法重新启动依赖收集，保证数组的响应式特性
+
+##### 劫持不改变数组长度的方法(include\indexOf\lastIndexOf)
+为每个方法创建劫持函数，将函数添加到instrumentations对象中
+
+1、劫持函数的作用是调用原始Array方法之前，先对可能是响应式数据的数组进行依赖收集track
+
+2、然后运行原始方法，如果返回-1或false，则再次以非响应式数据调用一次原始方法，以避免可能在原始方法中使用的是响应式数据
+
+        使用非响应式数据调用原始方法相当于绕过了响应式系统的追踪和更新，确保了方法执行的稳定性和准确性。
 
 #### createGetter
 两个参数，均为布尔值：isReadonly、shallow，默认都为false
