@@ -719,3 +719,29 @@ document.implementation.hasFeature("Core", "2.0");
 处理函数：表示带有数据的节点被复制、删除、重命名或引入一个文档时调用，
 接受5个参数：表示操作类型的数值(1:复制、2:导入、3:删除、4:重命名)、数据键、数据值、源节点和目标节点，
 删除节点时，源节点是null；除了复制节点时，目标节点均为null
+
+#### 样式
+##### 访问元素的样式
+在css中属性使用短划线连接不同的词汇，如background-image，必须将其转换成驼峰大小写的形式，才能通过js来访问
+
+    在标准模式下，所有度量值都必须指定一个度量单位；在混杂模式下，设置值就行浏览器会默认假设它是px单位
+
+为style对象(元素标签上的style特性)定义了一些属性和方法:
+
+- cssText：表示css代码
+- length：表示css属性的数量
+- getPropertyValue(propertyName)：返回包含给定属性的字符串值
+- item(index)：返回给定位置的css属性名称
+- removeProperty(propertyName)：从样式中删除给定属性
+- setProperty(propertyName,value,priority)：将给定属性设置为相应的值，并加上优先权标志(important)
+
+    
+    只能获取到元素的行内样式style
+
+计算的样式：
+
+getComputedStyle(element,null/伪元素字符串)：获取元素的样式，甚至可以`获取伪类元素样式`
+
+    无论在哪个浏览器，所有计算的样式都是只读的，而且可以获取到所有的样式，包括行内样式和内嵌式样式
+
+##### 操作样式表
