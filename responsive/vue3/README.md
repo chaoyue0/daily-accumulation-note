@@ -83,3 +83,28 @@ const instrumentations: Record<string, Function> = {}
 1、判断劫持的属性是否已经是响应式、可读性、浅响应式
 
 2、判断代理的receiver是否为原始对象，再根据代理对象是否只读以及是否是浅层代理，获取当前代理对象所对应的原始对象与receiver进行对比
+
+3、定义一个res变量，通过Reflect.get方法从一个对象中取属性值返回给res
+
+4、如果对象是非只读属性，那么就对目标对象进行依赖收集，追踪对对响应式象属性的访问
+
+5、如果对象是浅响应式的，就直接返回res
+
+6、检测res是ref对象时，实现对ref对象的拆包处理
+
+#### createSetter
+一个参数，布尔值：shallow，默认都为false
+
+封装了set方法,该方法用于拦截对象的写操作，四个参数：target(目标对象)、key(被劫持的属性名)、value(要修改的值)、receiver(Proxy)
+
+1、判断新值与旧值，在非浅响应式的前提下，先将新旧值都toRaw转成原始类型的值
+
+2、如果target不是数组，旧值为ref对象，新值不是ref对象，则将新值赋值给旧值
+
+3、hadKey变量：判断target是否包含要设置的属性，如果target是数组且key为整数，判断key是否小于数组的长度；否则通过hasOwn判断是否包含属性
+
+4、result变量：Reflect.set方法来设置target的key属性值为value
+
+5、如果target不包含key属性，说明这是一个添加属性的操作，触发trigger函数并通知依赖此对象的副作用函数有个属性被添加
+
+6、如果target包含key属性且值发生改变，说明这是一个更新属性的操作，触发trigger函数并通知依赖此对象的副作用函数有个属性被更新
