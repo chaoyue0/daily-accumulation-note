@@ -725,6 +725,7 @@ document.implementation.hasFeature("Core", "2.0");
 在css中属性使用短划线连接不同的词汇，如background-image，必须将其转换成驼峰大小写的形式，才能通过js来访问
 
     在标准模式下，所有度量值都必须指定一个度量单位；在混杂模式下，设置值就行浏览器会默认假设它是px单位
+    document.compatMode，返回浏览器的渲染模式
 
 为style对象(元素标签上的style特性)定义了一些属性和方法:
 
@@ -745,3 +746,61 @@ getComputedStyle(element,null/伪元素字符串)：获取元素的样式，甚�
     无论在哪个浏览器，所有计算的样式都是只读的，而且可以获取到所有的样式，包括行内样式和内嵌式样式
 
 ##### 操作样式表
+CSSStyleSheet类型表示的是样式表，继承自StyleSheet，从其中接口继承了一系列属性
+
+- disabled：表示样式表是否被禁止，属性是读写的
+- href：如果样式表通过link标签包含，返回样式表的URL，否则返回null
+- cssRules：样式表中包含的样式规则的集合
+- deleteRule(index)：删除规则集合中指定位置的规则
+- insertRule(rule,index)：向规则集合中指定位置插入rule字符串
+
+1、CSSRule
+```allykeynamelanguage
+var sheet = document.styleSheets[0]; //返回样式集合
+var rules = sheet.cssRules || sheet.rules; // 取得规则相关信息
+var style = rules.style // 取得css样式表
+```
+
+- cssText：返回整条规则对应的文本
+- selectorText：返回当前规则的选择符文本
+
+```allykeynamelanguage
+rule.style.backgroundColor = "red"
+```
+    通过这种方法修改规则会影响页面中适用于该规则的所有元素
+
+
+##### 元素大小
+1、偏移量
+
+定义：包含元素在屏幕上占用的所有可见的空间，元素的可见大小由其高度、宽度决定，包括所有内边距、滚动条和边框大小(不包含外边框)
+
+- offsetHeight：元素在垂直方向上占用的空间大小，包含元素的高度、内边距、`边框，以及(可见)水平滚动条的高度`
+- offsetWidth：元素在水平方向上占用的空间大小，包含元素的高度、内边距、`边框，以及(可见)垂直滚动条的宽度`
+- offsetLeft：元素的左边框至包含元素的左边框之间的像素距离
+- offsetTop：元素的上边框至包含元素的上边框之间的像素距离
+
+2、客户区大小
+
+定义：元素内容及其内边距所占据的空间大小，包含高度、宽度以及内边距
+
+- clientWidth：元素内容宽度 + 内边距宽度
+- clientHeight：元素内容高度 + 内边距高度
+
+3、滚动大小
+
+定义：包含滚动内容的元素的大小，有些元素(HTML)会自动添加滚动条，有些元素需要添加css的overflow属性才能滚动
+
+- scrollHeight：不通过滚动条隐藏内容的情况下，元素内容的总高度
+- scrollWidth：不通过滚动条隐藏内容的情况下，元素内容的总宽度
+- scrollLeft：被隐藏在区域左侧的像素数，通过设置这个属性可以改变元素的滚动位置
+- scrollTop：被隐藏在区域上方的像素数，通过设置这个属性可以改变元素的滚动位置
+
+4、确定元素大小
+
+getBoundingClientRect方法，返回一个矩形对象(包含padding和border)，包含4个属性：left、top、right、bottom，所有的距离都是相对于视角窗口的左上角计算的
+
+- left：左边界到元素左边界的距离
+- right：左边界到元素右边距的距离
+- top：上边界到元素上边界的距离
+- bottom：上边界到元素下边界的距离
