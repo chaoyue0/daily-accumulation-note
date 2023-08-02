@@ -108,3 +108,46 @@ const instrumentations: Record<string, Function> = {}
 5、如果target不包含key属性，说明这是一个添加属性的操作，触发trigger函数并通知依赖此对象的副作用函数有个属性被添加
 
 6、如果target包含key属性且值发生改变，说明这是一个更新属性的操作，触发trigger函数并通知依赖此对象的副作用函数有个属性被更新
+
+### 第四层 依赖收集
+#### track
+作用：访问响应式数据时进行依赖追踪，建立响应式数据与副作用函数之间的关联
+
+参数：target响应式对象、type定义响应式对象的类型、key跟踪响应式对象的属性
+
+1、如果target在targetMap结构中没有与target对应的依赖集合，表示是第一次访问这个响应式数据，需要创建一个新的空依赖集合并set到Map结构中
+
+2、如果dep在DepsMap结构中没有与key对应的Dep对象，表示是第一次访问target的key属性，需要创建一个新的空Dep对象(createDep)
+
+3、将dep作为参数调用trackEffects函数
+##### targetMap和DepsMap
+targetMap是WeakMap对象，用来存储响应式数据和它们对应的依赖集合(DepsMap)之间的关系。
+targetMap的键是一个响应式对象，对应的值是depsMap对象。
+作用是建立响应式数据与它们依赖集合之间的关联，进行依赖追踪
+
+depsMap是Map对象，用于存储响应式数据关联的所有属性的依赖关系。
+depsMap的键是一个属性名，对应的值是Dep对象。
+作用是建立响应式数据的属性与它们依赖之间的关联，当属性发生变化时，通过Dep对象触发该属性相关联的所有副作用函数进行响应式更新
+
+##### createDep
+创建一个新的dep，dep是一个set实例，且添加了两个属性
+
+- w：表示当前依赖是否被收集
+- n：表示当前依赖是否是新收集的
+```
+export const createDep = (effects?: ReactiveEffect[]): Dep => {
+ const dep = new Set<ReactiveEffect>(effects) as Dep
+ dep.w = 0
+ dep.n = 0
+ return dep
+}
+```
+
+#### trackEffects
+作用：收集副作用函数，主要把当前活跃的activeEffect加入dep，以及在activeEffect.deps中加入该副作用函数影响到的所有依赖
+
+1、根据shouldTrack判断依赖是否需要被捕获，默认shouldTrack的值为false，表示不需要被捕获
+
+2、effectTrackDepth表示依赖深度，小于依赖追踪的最大深度情况下，判断是否需要进行依赖追踪，如果需要则将shouldTrack设置为true
+
+3、将当前活跃的effect添加到dep中，同时将dep加入到受副作用影响的依赖集合中 activeEffect!.deps
