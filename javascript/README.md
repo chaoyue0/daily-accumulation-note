@@ -804,3 +804,26 @@ getBoundingClientRect方法，返回一个矩形对象(包含padding和border)�
 - right：左边界到元素右边距的距离
 - top：上边界到元素上边界的距离
 - bottom：上边界到元素下边界的距离
+
+#### 遍历
+##### NodeIterator
+通过`document.createNodeIterator()`方法创建其实例，接收4个参数
+
+- root：表示作为遍历根节点的节点
+- whatToShow：表示该访问哪些节点，参数是一个位掩码
+- filter：可以作为一个函数，表示是否接受或跳过特定节点
+- entityReferenceExpansion：表示是否扩展实体引用，一般为false
+
+实例方法
+
+- nextNode()：表示在深度遍历中前进一步，遍历到最后一个节点时候，返回null
+- previousNode()：表示在深度遍历中后退一步，遍历到根节点的时候，返回null
+
+##### TreeWalker
+通过`document.createTreeWalker()`方法创建其实例，与NodeIterator方法有相同的参数
+
+与NodeIterator类似，同样拥有nextNode和previousNode方法，此外还添加了几个新的方法
+
+- parentNode()：遍历到当前节点的父节点
+- firstChild()：遍历到当前节点的第一个子节点
+- lastChild()：遍历到当前节点的最后一个子节点
