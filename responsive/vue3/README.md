@@ -151,3 +151,33 @@ export const createDep = (effects?: ReactiveEffect[]): Dep => {
 2、effectTrackDepth表示依赖深度，小于依赖追踪的最大深度情况下，判断是否需要进行依赖追踪，如果需要则将shouldTrack设置为true
 
 3、将当前活跃的effect添加到dep中，同时将dep加入到受副作用影响的依赖集合中 activeEffect!.deps
+
+### 第四层 触发更新
+#### trigger
+作用：触发副作用函数的更新，在响应式数据发生变化时，通知相关联的副作用函数进行响应式更新
+
+##### 操作类型
+```
+export const enum TriggerOpTypes {
+  SET = 'set', // 设置操作，将旧值设置为新值
+  ADD = 'add', // 新增操作，添加一个新的值 例如给对象新增一个值 数组的 push 操作
+  DELETE = 'delete', // 删除操作 例如对象的 delete 操作，数组的 pop 操作
+  CLEAR = 'clear' // 用于 Map 和 Set 的 clear 操作。
+}
+```
+
+###### 步骤
+1、声明一个deps数组，用于储存与目标对象target和操作类型type相关联的所有Dep对象
+
+2、当目标对象是数组且修改的是数组的长度时，需要触发`与数组长度相关的副作用函数`的更新
+
+3、当操作类型是clear时，表示目标对象被清空，需要触发`所有与目标对象相关联的副作用函数`的更新
+
+4、当操作类型是另外集中类型时，需要触发与目标对象的`指定属性key相关联的副作用函数`的更新
+
+5、如果deps中只有一个Dep对象，表示只有一个副作用函数与目标对象相关联，直接触发这个副作用函数的更新`triggerEffects`
+
+6、如果deps中包含多个对象，表示多个副作用函数与目标对象相关联，将这些副作用函数放入`effects`数组中，并通过`createDep(effects)`创建一个新的 Dep 对象，用于触发这些副作用函数的更新
+(一个响应式数据可能与多个副作用函数相关联)
+
+    使用createDep的原因：triggerEffects函数接受的是一个Dep对象而不是一个Dep数组，需要将deps数组中的多个Dep对象合并成一个新的Dep对象，然后再调用triggerEffects函数
