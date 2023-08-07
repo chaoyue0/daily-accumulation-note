@@ -225,3 +225,36 @@ effect主要负责追踪和响应响应式数据的变化，当响应式数据�
 6、执行副作用函数的主体逻辑并返回结果
 
 7、使用finally清理操作和恢复状态，小于最大深度限制则调用`finalizeDepMarkers函数`处理，并将实例的父级副作用函数设为undefined，如果存在延时副作用则调用`stop函数`停止当前实例
+
+### 第四层 effect stop
+作用：对effect的的停止和清理操作，确保在正确的时机停止effect的执行，避免不必要的计算和依赖追踪
+
+1、判断当前effect是否正在执行，是的话将deferStop设置为true，表示需要延时处理
+
+2、判断当前effect的激活状态，如果是激活状态，则调用`cleanupEffect函数`
+
+3、如果effect中存在onStop函数，则调用`onStop函数`
+
+4、将effect的激活状态调整成false
+
+#### cleanupEffect
+
+1、对象解构赋值，从effect中提取deps属性
+
+2、遍历deps，删除effect，清理依赖和effect之间的关联关系
+
+3、将deps的length调整成0
+
+### 第五层 Dep
+#### finalizeDepMarkers函数
+作用：完成了对副作用函数effect的依赖追踪标记的最后处理，根据依赖状态来决定是否保留依赖，并将依赖追踪标记清零，以便下一轮的依赖追踪
+
+1、从参数effect中获取deps数组
+
+2、遍历deps数组，判断是否当前的dep是否曾经被追踪`wasTracked`并且当前不再被追踪`newTracked`，如果是则从dep的依赖列表中删除effect，如果不是则保留在deps数组中(使用ptr表示已有数据的下标)
+
+3、使用位运算符清除当前dep的依赖追踪标记
+
+4、将deps数组的长度截断为ptr，移除多余的空项
+
+    为什么使用位运算符清除：高效的标记与清零、节省内存空间(可以将多个标记位存储在一个整数中)、提高性能(计算机硬件层面的操作)
