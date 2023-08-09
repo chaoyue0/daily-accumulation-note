@@ -258,3 +258,30 @@ effect主要负责追踪和响应响应式数据的变化，当响应式数据�
 4、将deps数组的长度截断为ptr，移除多余的空项
 
     为什么使用位运算符清除：高效的标记与清零、节省内存空间(可以将多个标记位存储在一个整数中)、提高性能(计算机硬件层面的操作)
+
+## Ref
+Vue3的响应式是基于Proxy实现的，而Proxy的前提是代理的变量是对象而不能是基本类型的数据，
+如果想要对基本类型数据实现响应式就需要将基本类型包装成Ref对象，从而实现响应式
+
+### createRef 函数    
+参数：rawValue、shallow布尔值
+
+判断rawValue值是否已经是Ref对象了，如果是则直接返回，如果不是，需要调用`RefImpl类`创建
+
+#### RefImpl 类
+使用`class`生成实例对象
+
+1、定义两个私有变量value、rawValue，以及两个公有变量dep、isRef(readonly)
+
+2、通过constructor方法编写构造函数的内容，对实例的两个私有变量进行赋值
+```typescript
+    this._rawValue = __v_isShallow ? value : toRaw(value)
+    this._value = __v_isShallow ? value : toReactive(value)
+```
+3、拦截get方法，trackRefValue追踪实例对象，并返回value
+
+4、拦截set方法，如果newValue是shallow或者readonly，则直接返回，如果不是通过`toRaw`转成原始值。判断新旧值是否相等(值是否改变)，对实例私有变量进行重新赋值，最后通过`triggerRefValue`触发
+```typescript
+    this._rawValue = newVal
+    this._value = useDirectValue ? newVal : toReactive(newVal)
+```
