@@ -59,4 +59,90 @@ DOM2规定事件流分为3个阶段：事件捕获、到达目标和事件冒泡
 
     通过addEventListener添加的事件只能使用removeEventListener并传入与添加时相同的参数来移除，因此匿名函数无法移除
 
-### IE 事件处理程序
+
+
+## 事件对象
+所有浏览器都支持`event对象`
+
+### DOM 事件对象
+event对象是传给事件处理程序的唯一参数，不管是onclick还是addEventListener
+
+event对象常用的公共属性和方法：
+    
+    在事件处理程序内部，this对象始终等于currentTarget的值
+
+- currentTarget：表示当前事件处理程序正在监听的DOM元素，只读
+- target：表示当前触发事件的DOM元素，只读
+- cancelable：表示是否可以取消事件的默认行为，只读
+- type：表示被触发的事件类型，如click
+- preventDefault()：用于取消事件的默认行为，只有cancelable为true才可以调用该方法
+- stopPropagation()：用于取消所所有后续事件捕获或事件冒泡，只有bubbles为true才可以调用该方法
+
+
+    event对象只在事件处理程序执行期间存在，一旦执行完毕，就会被销毁
+
+### IE 事件对象
+
+
+## 事件类型
+### 用户界面事件
+#### load 事件
+定义：表示在整个页面(包括所有外部资源如图片、js文件和css文件)加载完成后触发
+
+##### js方式 指定load事件处理程序
+使用addEventListener()方法来指定事件处理程序，该事件也会收到一个event对象
+```typescript
+window.addEventListener("load", (event) => {
+ console.log("Loaded!");
+});
+```
+
+1、获取图片元素，然后给该元素添加load事件的监听即可
+
+2、与图片不同，要下载js文件必须同时指定src属性并把script元素添加到文档中
+
+3、与script节点相同，link节点也必须指定src属性并把link节点添加到文档中后才会下载样式表
+
+##### html方式 指定load事件处理程序
+向<body>元素添加onload属性
+```
+<body onload="console.log('Loaded!')"></body>
+```
+
+1、图片上也会触发load事件，包括DOM中的图片和非DOM中的图片，直接在img标签中添加onload属性指定事件处理程序，表示图片加载完后直接事件处理程序
+
+#### unload 事件
+与load事件相对，表示unload事件会在文档卸载完成后触发，一般是在从一个页面导航到另一个页面时触发，常用于清理引用，避免内存泄露，
+与load事件类似，unload事件处理程序也有两种指定方式，js和html
+
+    unload事件是在页面卸载完成后触发的，不能使用页面加载后才有的对象，否则会导致错误
+
+#### resize 事件
+定义：浏览器窗口被缩放到新高度或宽度时，会触发resize事件
+
+触发方式：
+
+- window监听resize事件
+- body元素添加onresize属性
+
+
+    浏览器窗口在最大化和最小化时也会触发resize事件
+
+#### scroll 事件
+虽然scroll事件发生在window上，但实际上反映的是`页面中相应元素`的变化
+
+浏览器的不同模式(`document.compatMode`)，scroll事件获取的方式不同
+
+##### 混杂模式
+通过body元素检测scrollTop和scrollLeft属性的变化
+```typescript
+document.documentElement.scrollTop
+```
+
+##### 标准模式
+通过html元素检测scrollTop和scrollLeft属性的变化
+```typescript
+document.body.scrollTop
+```
+
+### 焦点事件
