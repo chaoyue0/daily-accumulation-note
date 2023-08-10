@@ -70,7 +70,9 @@ User 接口为 {
 - 元组类型赋值时，需要按照元组指定的类型顺序进行赋值
 - 当添加越界元素时，该元素会被定义为元组中每个类型的联合类型
 
-## 条件类型 infer
+## 条件类型
+
+    null和undefined是其他很合类型(包括void)的子类型，可以赋值给其他类型，赋值后都会变成null和undefined
 infer可以在extends的条件语句中推断待推断的类型，infer表示一个占位
 
 - infer只能在extends的右侧使用
@@ -146,3 +148,26 @@ type ReverseArray<T extends unknown[]> = T extends [infer First, ...infer Rest]
 type Value = ReverseArray<[1, 2, 3, 4]> // [4,3,2,1]
 ```
 [1, 2, 3, 4] 与 [infer First, ...infer Rest] 进行匹配，1对应First，234对应扩展运算符...Rest，匹配成功将1也就是First放到数组的尾部，递归调用直到Rest数组为空，递归调用停止
+
+### 求类型的差集和交集
+```typescript
+type Diff<T, U> = T extends U ? never : T; // 找出T的差集
+type Filter<T, U> = T extends U ? T : never; // 找出交集
+```
+
+## 索引类型
+通过`索引签名`从对象中获取一些属性的值，在ts中索引签名可以是`string`、`number`或`symbols`
+
+    在js中一个对象的索引签名会隐式调用toString方法，而在ts中会报错
+
+场景：获取对象中一些属性的值，无法确定对象中是否包含某个属性
+```typescript
+function getValues<T, K extends keyof T>(person: T, keys: K[]): T[K][] {
+  return keys.map(key => person[key]);
+}
+```
+keyof 索引类型查询操作符：表示类型T所有公共属性的联合类型
+
+T[k] 索引访问操作符：表示对象T的属性k
+
+K extends T 泛型约束：限制k的属性只能是T对象属性的子集
