@@ -210,3 +210,14 @@ mousedown、mouseup、click、mousedown、mouseup、dblclick
 
 ##### 相关元素
 DOM通过event对象的 `relatedTarget属性`提供了相关元素的信息。这个属性只有在`mouseover`和`mouseout`事件发生时才包含值，其他所有事件的这个属性的值都是null
+
+### 键盘与输入事件
+
+- keydown：表示用户按下键盘上某个键时触发，持续按住会重复触发
+- keyup：用户释放键盘上某个键时触发
+- keypress：用户按下键盘上某个键并产生字符时触发，持续按住会重复触发
+
+    
+    DOM3 Event废弃了keypress事件，推荐使用textInput事件
+
+#### 键码
