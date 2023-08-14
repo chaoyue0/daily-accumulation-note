@@ -285,3 +285,98 @@ Vue3的响应式是基于Proxy实现的，而Proxy的前提是代理的变量是
     this._rawValue = newVal
     this._value = useDirectValue ? newVal : toReactive(newVal)
 ```
+
+### Ref 类型
+
+#### 简单类型 number / string / boolean / Function
+```
+function ref<T>(value: T): Ref<T>
+```
+
+#### Ref 类型嵌套
+期望直接通过a.value获取值，而不是a.value.value.value
+##### extends 条件判断
+```
+function ref<T>(value: T): T extends Ref ? T : Ref<UnwrapRef<T>>
+```
+针对ref函数的返回值进行条件判断，如果T是Ref类型，则直接返回，否则需要将T包装成Ref类型再返回
+
+##### UnwrapRef 类型(非Ref类型)
+表示用`索引签名`的形式，对Ref类型的`反解`，作用：
+
+- 如果范型T是Ref类型，则UnwrapRef类型是ref.value的类型
+- 如果范型T不是Ref类型，则UnwrapRef类型是T
+
+```typescript
+type UnwrapRef<T> = {
+  ref: T extends Ref<infer R> ? R : T
+  other: T
+}[T extends Ref ? 'ref' : 'other']
+```
+
+    还需要考虑UnwrapRef<T>中的T是对象，且这个对象中包含Ref的情况，还需要UnwrapRef进行反解
+
+```typescript
+type UnwraRef<T> = {
+  ref: T extends Ref<infer R> ? R : T
+  // 注意这里
+  object: { [K in keyof T]: UnwrapRef<T[K]> }
+  other: T
+}[T extends Ref 
+  ? 'ref' 
+  : T extends object 
+    ? 'object' 
+    : 'other']
+```
+
+遍历`K in keyof T`的时候，只要对值类型 T[K] 再进行解包UnwrapRef<T[K]>
+
+#### object / Array 类型
+
+- object：`in keyof` 遍历object的每个键，每个键值不能是Ref类型
+- Array：遍历Array的每个元素，元素保留自身的类型，如果元素是object、Array，需要再次进行遍历操作
+
+##### object
+```typescript
+type UnwrapRef<T> =  T extends BaseTypes | Function ? T : T extends object ? UnwrapObject<T> : T
+
+type UnwrapObject<T> = { [P in keyof T]: UnwrapRef<T[P]> } 
+```
+
+    递归调用UnwrapRef，因为可能对象的键也是对象，存在对象嵌套对象的形式
+
+##### Array
+```typescript
+type UnwrapArr<T> = { [K in keyof T]: UnwrapRefSimple<T[K]> }
+```
+
+将之前的UnwrapRef的功能拆分成两部分，一部分由`UnwrapRefSimple`实现，而`infer`的提取功能由`UnwrapRef`实现
+
+#### 总结
+ref函数始终返回一个类型为Ref的值
+
+1、参数是`简单类型`，则直接返回
+
+2、参数是`Ref`，用infer v获取参数类型，返回v
+
+3、参数是`object`，遍历object将属性解成简单类型
+
+4、参数是`Array`，遍历Array保留数组元素中的类型
+
+```typescript
+type UnwrapRef<T> =  T extends Ref<infer V> ? UnwrapRefSimple<V> : UnwrapRefSimple<T>
+
+type UnwrapArr<T> = { [K in keyof T]: UnwrapRefSimple<T[K]> }
+
+type UnwrapObject<T> = { [P in keyof T]: UnwrapRef<T[P]> }
+
+type UnwrapRefSimple<T> = T extends
+    | BaseTypes
+    | Function
+    | Ref
+    ? T
+    : T extends Array<any>
+        ? UnwrapArr<T>
+        : T extends object
+            ? UnwrapObject<T> : T
+```
