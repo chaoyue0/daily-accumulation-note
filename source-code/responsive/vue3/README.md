@@ -86,7 +86,7 @@ const instrumentations: Record<string, Function> = {}
 
 3、定义一个res变量，通过Reflect.get方法从一个对象中取属性值返回给res
 
-4、如果对象是非只读属性，那么就对目标对象进行依赖收集，追踪对对响应式象属性的访问
+4、如果对象是非只读属性，那么就对目标对象进行`依赖收集`，追踪对响应式象属性的访问
 
 5、如果对象是浅响应式的，就直接返回res
 
@@ -105,35 +105,35 @@ const instrumentations: Record<string, Function> = {}
 
 4、result变量：Reflect.set方法来设置target的key属性值为value
 
-5、如果target不包含key属性，说明这是一个添加属性的操作，触发trigger函数并通知依赖此对象的副作用函数有个属性被添加
+5、如果target不包含key属性，说明这是一个`添加属性`的操作，触发`trigger函数`并通知依赖此对象的副作用函数有个属性被添加
 
-6、如果target包含key属性且值发生改变，说明这是一个更新属性的操作，触发trigger函数并通知依赖此对象的副作用函数有个属性被更新
+6、如果target包含key属性且值发生改变，说明这是一个`更新属性`的操作，触发`trigger函数`并通知依赖此对象的副作用函数有个属性被更新
 
 ### 第四层 effect 依赖收集
 #### track
-作用：访问响应式数据时进行依赖追踪，建立响应式数据与副作用函数之间的关联
+作用：访问响应式数据时进行`依赖追踪`，建立响应式数据与副作用函数之间的关联
 
 参数：target响应式对象、type定义响应式对象的类型、key跟踪响应式对象的属性
 
-1、如果target在targetMap结构中没有与target对应的依赖集合，表示是第一次访问这个响应式数据，需要创建一个新的空依赖集合并set到Map结构中
+1、如果target在`targetMap`结构中没有与target对应的依赖集合，表示是`第一次访问这个响应式数据`，需要`创建`一个新的空依赖集合并set到Map结构中
 
-2、如果dep在DepsMap结构中没有与key对应的Dep对象，表示是第一次访问target的key属性，需要创建一个新的空Dep对象(createDep)
+2、如果dep在`DepsMap`结构中没有与key对应的Dep对象，表示是`第一次访问target的key属性`，需要`创建`一个新的空Dep对象(createDep)
 
-3、将dep作为参数调用trackEffects函数
+3、将dep作为参数调用`trackEffects函数`
 ##### targetMap和DepsMap
-targetMap是WeakMap对象，用来存储响应式数据和它们对应的依赖集合(DepsMap)之间的关系。
+targetMap是`WeakMap对象`，用来存储响应式数据和它们对应的`依赖集合(DepsMap)`之间的关系。
 targetMap的键是一个响应式对象，对应的值是depsMap对象。
 作用是建立响应式数据与它们依赖集合之间的关联，进行依赖追踪
 
-depsMap是Map对象，用于存储响应式数据关联的所有属性的依赖关系。
+depsMap是`Map对象`，用于存储响应式数据关联的所有属性的依赖关系。
 depsMap的键是一个属性名，对应的值是Dep对象。
-作用是建立响应式数据的属性与它们依赖之间的关联，当属性发生变化时，通过Dep对象触发该属性相关联的所有副作用函数进行响应式更新
+作用是建立响应式数据的属性与它们依赖之间的关联，当属性发生变化时，通过`Dep对象触发`该属性相关联的所有副作用函数进行响应式更新
 
 ##### createDep
 创建一个新的dep，dep是一个set实例，且添加了两个属性
 
-- w：表示当前依赖是否被收集
-- n：表示当前依赖是否是新收集的
+- w：表示当前依赖`是否被收集`
+- n：表示当前依赖`是否是新收集的`
 ```
 export const createDep = (effects?: ReactiveEffect[]): Dep => {
  const dep = new Set<ReactiveEffect>(effects) as Dep
@@ -144,7 +144,8 @@ export const createDep = (effects?: ReactiveEffect[]): Dep => {
 ```
 
 #### trackEffects
-作用：收集副作用函数，主要把当前活跃的activeEffect加入dep，以及在activeEffect.deps中加入该副作用函数影响到的所有依赖
+作用：将当前活动的响应式 effect（即正在执行的副作用函数）与相关的依赖关系建立关联。
+在响应式数据被访问（被读取）时，系统就能够知道哪些副作用函数依赖于这个数据，从而在数据变化时，能够通知这些副作用函数进行更新。
 
 1、根据shouldTrack判断依赖是否需要被捕获，默认shouldTrack的值为false，表示不需要被捕获
 
