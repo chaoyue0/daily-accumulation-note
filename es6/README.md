@@ -93,3 +93,75 @@ String、Array、Map、Set等原生数据结构都是可迭代对象
 
     原生object对象是默认没有部署Iterator接口，即object不是一个可迭代对象，因此不能使用for of遍历object
     原因：对象的哪一个属性先后遍历是不确定的，需要开发者手动指定。而本质上，迭代器是一种线性处理，而对象的处理属于非线性处理
+
+## promise
+定义：promise是一个规范，实现promise的方法有很多，但是必须满足标准定义，也就是`promise/A+规范`
+
+### promise/A+ 规范
+#### promise state
+一个promise必须包含3个状态：pending、fulfilled、rejected
+
+#### promise method
+一个promise必须提供一个`then方法`，该方法接受两个参数：`onFulfilled`和`onRejected`，且必须返回一个promise
+
+
+
+### 构造函数
+#### 第一阶段
+```typescript
+function Promise(executor) {
+  var self = this
+  self.status = 'pending' // Promise当前的状态
+  self.data = undefined  // Promise的值
+  self.onResolvedCallback = [] // Promise resolve时的回调函数集，因为在Promise结束之前有可能有多个回调添加到它上面
+  self.onRejectedCallback = [] // Promise reject时的回调函数集，因为在Promise结束之前有可能有多个回调添加到它上面
+
+  executor(resolve, reject) // 执行executor并传入相应的参数
+}
+```
+    1、executor函数执行过程中可能会报错
+    2、executor函数的两个参数resolve、reject未定义
+
+#### 第二阶段
+针对executor函数执行过程中可能会报错的情况
+```typescript
+  try { // 考虑到执行executor的过程中有可能出错，所以我们用try/catch块给包起来，并且在出错后以catch到的值reject掉这个Promise
+    executor(resolve, reject) // 执行executor
+  } catch(e) {
+    reject(e)
+  }
+```
+
+#### 第三阶段
+针对executor函数两个未定义的参数
+```typescript
+ function resolve(value) {
+    if (self.status === 'pending') {
+      self.status = 'resolved'
+      self.data = value
+      for(var i = 0; i < self.onResolvedCallback.length; i++) {
+        self.onResolvedCallback[i](value)
+      }
+    }
+  }
+
+  function reject(reason) {
+    if (self.status === 'pending') {
+      self.status = 'rejected'
+      self.data = reason
+      for(var i = 0; i < self.onRejectedCallback.length; i++) {
+        self.onRejectedCallback[i](reason)
+      }
+    }
+  }
+```
+判断status为pending时，将status改成对应的值(resolved / rejected)，并将value和reason存到data上，之后执行相应的回调函数
+
+### then方法
+用来注册这个Promise状态确认后的回调，需要将then方法写在原型链上，并返回一个新的Promise对象
+
+#### 链式调用
+每个promise对象都可以多次调用then方法，每次调用返回的promise状态取决于那一次调用时传入参数的返回值
+
+#### 源码实现
+
