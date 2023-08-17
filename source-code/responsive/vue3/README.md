@@ -381,3 +381,41 @@ type UnwrapRefSimple<T> = T extends
         : T extends object
             ? UnwrapObject<T> : T
 ```
+
+## Computed
+### computed 函数
+参数：getterOrOptions，可能是一个`getter函数`或包含`get和set属性的对象`
+
+    getter函数表示：computed是只读的，只有一个getter函数则会给一个默认的setter
+    对象表示：自定义的getter和setter，表示computed可以被修改
+
+返回值：`ComputedRefImpl`类创建的实例对象
+
+### ComputedRefImpl 类
+#### 变量
+- dep
+- _value：存放缓存值
+- _dirty：是否为脏数据，是脏数据则表示值需要更新
+- __v_isRef：表示ref标识
+- ReactiveFlags.IS_READONLY：表示isReadonly标识
+
+#### constructor
+作用：创建计算属性对象并设置其内部属性和副作用函数
+
+##### 副作用函数
+创建一个新的`ReactiveEffect`对象，传入getter和回调函数，其中当计算属性被计算出来之后，标记为脏数据，并触发响应式更新`triggerRefValue`
+
+##### 内部属性
+将计算属性对象赋值给副作用函数的computed属性
+
+将计算属性对象的状态设置为只读状态
+#### get
+1、为了确保在正确的数据上进行依赖追踪和副作用函数的触发，需要调用`toRaw`获取原始的计算属性对象self
+
+2、对self对象进行`trackRefValue`依赖追踪，建立依赖关系
+
+3、判断self是否为脏数据，如果是则将dirty设为false，调用`run`执行计算属性的副作用函数，获取计算属性的最新值
+
+4、返回计算属性的值
+#### set
+调用实例对象的`自定义_setter方法`，并传入新的值
