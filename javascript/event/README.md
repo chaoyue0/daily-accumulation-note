@@ -221,3 +221,28 @@ DOM通过event对象的 `relatedTarget属性`提供了相关元素的信息。�
     DOM3 Event废弃了keypress事件，推荐使用textInput事件
 
 #### 键码
+event.keyCode：event对象的`keyCode属性`中会保存一个键码，对应键盘上特定的一个键，对于字母和数字键，keyCode的值与`小写字母`和数字的`ASCII编码`一致
+
+#### textInput 事件
+表示字符被输入到`可编辑区域`时触发，作为keypress的替代
+
+##### 与keypress的区别
+
+- keypress事件表示可以在任何可以获取到焦点的元素上触发
+- textInput事件只有在新字符串被插入时才会触发，keypress对任何能影响文本的键都会触发(包括回退键)
+
+##### 属性
+
+- data：表示要插入的字符(不是字符编码)，shift + r表示R
+- inputMethod：表示输入文本的手段，常见的值有1(键盘)、2(粘贴)、3(拖放)、
+
+### 合成事件
+DOM3 新增的事件，用于处理IME 输入的复杂输入序列，可以让用户输入物理键盘上没有的字符
+
+#### 类型
+
+- compositionstart：表示在IME的文本系统打开时触发，表示输入即将开始
+- compositionupdate，在新字符插入输入字段时触发
+- compositionend：表示在IME的文本系统关闭时触发，表示恢复正常键盘输入
+
+### HTML5 事件
