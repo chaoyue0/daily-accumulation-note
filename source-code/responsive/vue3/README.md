@@ -419,3 +419,36 @@ type UnwrapRefSimple<T> = T extends
 4、返回计算属性的值
 #### set
 调用实例对象的`自定义_setter方法`，并传入新的值
+
+### deferredComputed 函数
+定义：属于一种被称为“`延时计算属性`”的特殊类型的计算属性，将计算逻辑和实际的计算操作分开，只有在需要的时候才进行计算
+
+在effect使用时有`异步`的特性，当effect收集到deferredComputed依赖，deferredComputed的value发生变化并不会立即触发effect收集函数，
+而是等到下一次`微任务`执行。
+
+- 访问计算属性时，不会立即执行计算
+- 直接访问deferredComputed`.value`时是同步执行的，会马上获取到最新值
+
+### DeferredComputedRefImpl 类
+#### constructor
+##### 变量
+
+- compareTarget：any类型，表示比较目标，用于比较计算属性的值是否发生变化
+- hasCompareTarget：布尔值，表示是否已经存在需要比较的目标
+- scheduled：布尔值，表示是否已经安排了调度执行计算属性的更新
+
+##### ReactiveEffect
+定义：创建实例用于管理计算属性的响应式
+
+场景意义：即使依赖的数据变了，实际计算属性的值并没有变化，这样重新计算就是浪费时间
+
+1、通过`computedTrigger`布尔值，判断计算属性的变化是否由其他计算属性触发，如果是，表示存在比较目标将value赋值给`compareTarget`，并将`hasCompareTarget`设为true
+    
+    该布尔值是在调用计算属性的getter函数时传入的，可以采取相应的优化措施，避免不必要的重新计算
+
+2、如果不是由其他计算属性触发的并且当前计算属性`没有被调度过`(!scheduled)，根据hasCompareTarget布尔值获取计算属性的值，作为标尺值记录，
+将scheduled设为true，hasCompareTarget设为false，表示我们已经使用过标尺
+
+3、使用scheduler回调函数进行调度，它会在下一个事件循环中执行，比较最新值和之前的标尺值是否相等，若不相等说明计算属性发生了变化，则会触发更新以便通知页面进行更新
+
+4、设置计算属性为脏数据，表示需要重新计算
