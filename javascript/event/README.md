@@ -246,3 +246,52 @@ DOM3 新增的事件，用于处理IME 输入的复杂输入序列，可以让�
 - compositionend：表示在IME的文本系统关闭时触发，表示恢复正常键盘输入
 
 ### HTML5 事件
+#### contextmenu 事件
+windows 通过鼠标右键为用户增加了上下文菜单的概念，而mac 通过ctrl + 单击
+
+contextmenu事件冒泡，只要给document指定一个事件处理程序就可以处理页面上的所有同类事件，可以通过`event.preventDefault()`取消事件冒泡
+
+#### beforeunload 事件
+给开发者提供阻止页面被卸载的机会，这个事件会在页面即将从浏览器中卸载时触发，会向用户显示一个确认框，请用户确认是希望关闭页面，还是继续留在页面上
+
+设置为要在确认框中显示的字符串:
+- event.returnValue属性(IE和Firefox)
+
+- 作为函数值返回(Safari和Chrome)
+
+#### DOMContentLoaded 事件
+该事件会在DOM树构建完成后立即触发，不用等待图片、js文件、css文件或其他资源加载完成
+
+#### readystatechange 事件
+提供文档或元素加载状态的信息，支持该事件的每个对象都有一个readyState属性
+
+- uninitialized：对象存在并尚未初始化
+- loading：对象正在加载数据
+- loaded：对象已经加载完数据
+- interactive：对象可以交互，但尚未加载完成
+- complete：对象加载完成
+
+#### pageshow 与 pagehide 事件
+往返缓存：使用浏览器的 前进 和 后退 按钮时加快页面之间的切换，这个缓存不仅存储页面数据，也存储DOM和JS状态，实际上是把整个页面都保存在内存里
+
+    如果页面在缓存中，那么导航到这个页面时就不会触发load事件
+
+##### pageshow 事件
+定义：页面显示时触发，无论是否来自往返缓存。在新加载的页面上，pageshow事件会在load事件之后触发；在来自往返缓存的页面上，pageshow事件会在页面状态完全恢复后触发
+
+    这个事件的目标是document，但是事件处理程序必须添加到window上
+
+persisted属性：布尔值，如果页面存储在往返缓存中则返回true，否则返回false
+
+##### pagehide 事件
+定义：页面从浏览器中卸载后触发，在unload事件之前触发
+
+persisted属性：页面在卸载之后会被保存在往返缓存中则返回true，因此第一次触发pageshow事件时persisted属性始终都是false，而
+第一次触发pagehide事件时persisted属性始终是true；
+
+#### hashchange 事件
+表示URL散列值(#后面的部分)发生变化时通知开发者
+
+属性：oldURL和newURL分别保存变化前后的URL，而且是包含散列值完整URL
+
+    如果想确定当前的散列值，最好使用location对象，loaction.hash
