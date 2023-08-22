@@ -32,3 +32,48 @@
 通过requestAnimationFrame方法递归地向队列中加入回调函数，可以保证每次重绘最多只调用一次回调函数
 
 ## Canvas 画布
+使用canvas标签，width和height属性是必填项，用于告诉浏览器在多大面积上绘图，在标签内部的内容是后备数据，表示当浏览器不支持canvas标签时显示的内容
+
+### 基本的画布功能
+#### getContext
+定义：返回canvas的上下文，如果上下文没有定义则返回null
+
+参数：contextType表示上下文类型，可能是’`2d`'表示二维渲染上下文、‘`webgl`’表示三维渲染上下文对象等
+
+    在使用canvas之前需要对浏览器进行兼容性处理，判断getContext是否返回null
+
+#### toDataURL
+定义：可以导出canvas元素上的图像
+
+参数：生成图片的MIME类型(image、png等)
+
+```typescript
+ // 取得图像的数据 URI
+ let imgURI = drawing.toDataURL("image/png");
+```
+
+### 2D绘图上下文
+定义：提供了绘制2D图形的方法，包括矩形、弧形和路径
+
+坐标：坐标原点(0,0)在canvas元素的左上角，所以坐标值都相对于该点计算，x坐标`向右`增长，y坐标`向下`增长
+
+    默认情况下，width和height表示两个方向上像素的最大值
+
+#### 填充和描边
+填充：以指定样式(颜色、渐变或图像)自动填充形状，`fillStyle属性`
+
+描边：只为图形`边界`着色,`strokeStyle属性`
+
+#### 绘制矩形
+以下三个方法都接收4个参数：x坐标、y坐标、矩形宽度和矩形高度，参数的单位都是像素
+##### fillRect
+定义：用于以指定颜色在画布上绘制并填充矩形，填充的颜色使用fillStyle属性指定
+```typescript
+context.fillStyle = "#ff0000";
+context.fillRect(10, 10, 50, 50);
+```
+##### strokeRect
+定义：用于以指定颜色在画布上绘制矩形轮廓，轮廓颜色使用strokeStyle属性指定
+
+##### clearRect
+定义：可以擦除画布中某个区域，用于把绘图上下文中的某个区域变透明
