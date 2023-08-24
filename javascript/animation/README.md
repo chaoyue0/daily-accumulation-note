@@ -72,8 +72,31 @@
 context.fillStyle = "#ff0000";
 context.fillRect(10, 10, 50, 50);
 ```
+
+    fillStyle属性的定义必须在fillRect定义的前面
 ##### strokeRect
 定义：用于以指定颜色在画布上绘制矩形轮廓，轮廓颜色使用strokeStyle属性指定
 
+    strokeStyle属性的定义必须在strokeRect定义的前面
+
 ##### clearRect
 定义：可以擦除画布中某个区域，用于把绘图上下文中的某个区域变透明
+
+#### 绘制路径
+要绘制路径，首先必须调用`beginPath()方法`以表示要开始绘制新路径，具体调用以下方法来绘制路径：
+
+- arc(x,y,radius,startAngle,endAngle,counterclockwise)：以坐标(x,y)为圆心，以radius为半径绘制一条弧线，startAngle表示`起始弧度`，endAngle表示`结束弧度`
+counterclockwise表示是否逆时针计算起始弧度和结束弧度，默认为顺时针
+
+    
+    一个圆周为2Π弧度，即180度 = Π 弧度
+- lineTo(x,y)：绘制一条从`上一点`到(x,y)的直线
+- moveTo(x,y)：不绘制线条，只会把绘制光标移动到(x,y)
+- rect(x,y,width,height)：以给定宽度和高度在坐标点(x,y)绘制一个矩形，它创建的是一条路径，而不是一个独立的图形
+- isPointInPath(x,y)：接收x轴和y轴坐标作为参数，用于确定指定的点是否在路径上，可以在关闭路径前随时调用
+
+创建路径后，可以使用`closePath()`方法绘制一条返回起点的线
+
+最后需要使用`stroke()`方法描画路径
+
+#### 绘制文本
