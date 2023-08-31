@@ -108,3 +108,44 @@ clipboardData对象方法：
 - getData()：从剪贴板检索字符串数据，并接收一个参数，该参数是要检索的数据的格式：text和URL(IE)、MIME(Firefox、Safari、Chrome)
 - setData()：第一个参数用于指定数据类型，第二个参数是要放到剪贴板上的文本
 - clearData()
+
+### HTML5 约束验证
+
+#### 必填字段
+给表单字段添加`required属性`，任何带有required属性的字段都必须有值，否则无法提交表单
+
+    浏览器的差异：Safari不会阻止提交表单，其他浏览器会阻止表单提交并显示相关信息提示
+
+#### 更多输入类型
+新增了type值：email和url
+
+- email类型：确保输入的文本匹配电子邮箱地址(文本出现@会被认为是有效的电子邮箱地址)
+- url类型：确保输入的文本匹配URL
+
+#### 数值范围
+新增几种输入元素类型，都是期待某种数值输入的：number、range、datetime、datetime-local、date、month、week、time
+
+对于上述每种数值类型，都可以指定min属性、max属性，以及step属性
+
+方法：
+
+- stepUp()：从当前值加上多少数值，默认步长值会递增1
+- stepDown()：从当前值减去多少数值，默认步长值会递减1
+
+#### 输入模式
+新增`pattern属性`，这个属性用于指定一个正则表达式，表示用户输入的文本必须与之匹配
+
+#### 检测有效性
+使用`checkValidity()方法`可以检测表单中任意给定字段是否有效，有效则返回true(字段值不匹配pattern属性也会被视为无效)
+
+`validity属性`会告诉字段为什么有效或无效，包含一系列返回布尔值的属性：
+
+- patternMismatch：字段值是否匹配指定的pattern
+- rangeOverflow：字段值是否大于max
+- rangeUnderflow：字段值是否小于min
+- stepMisMatch：字段值与min、max、step的值是否相符
+- typeMismatch：判断字段值是否为email和url要求的格式
+- valueMissing：如果字段是必填的但是没有值返回true
+
+#### 禁用验证
+指定`novalidate属性`可以禁止对表单进行任何验证
