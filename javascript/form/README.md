@@ -149,3 +149,30 @@ clipboardData对象方法：
 
 #### 禁用验证
 指定`novalidate属性`可以禁止对表单进行任何验证
+
+## 选择框编程
+select标签，HTMLSelectElement类型属性和方法：
+
+- add(newOption,relOption)：在relOption之前向组件中添加新的option
+- multiple：布尔值，表示是否允许多选
+- options：控件中所有option元素
+- remove(index)：移除给定位置的选项
+- selectedIndex：选中项基于0的`索引值`，没有选中则为-1，对于多选列表，始终是第一个选项的索引
+- size：控件中可见的行数
+
+
+    1、没有选中值，则选择框的值是空字符串
+    2、选中项其value属性没有指定值，则选择框的值是该项的文本内容
+
+option标签，HTMLOptionElement类型的属性和方法：
+
+- index：选项在options集合中的索引
+- label：选项的标签
+- selected：布尔值，表示是否选中了当前项
+- text：表示选项的文本
+- value：选项的值
+
+
+    其他表单字段会在自己的值改变后出发change事件，然后字段失去焦点，选择框会在选中一项时立即触发change事件
+
+### 选项处理
