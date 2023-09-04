@@ -160,7 +160,7 @@ AST节点：
 ### generate 函数
 定义：创建一个用于代码生成的上下文对象，接收两个参数：输入转换后的`抽象语法树`AST和一个`配置对象`(CodegenOptions)
 
-#### 创建代码生成上下文
+#### createCodegenContext 创建代码生成上下文
 定义：创建一个context对象，用于存储生成代码的上下文信息
 
 context对象中包含从参数中传入的配置对象相关属性，以及额外的属性和方法：
@@ -181,7 +181,46 @@ context对象中包含从参数中传入的配置对象相关属性，以及额�
 
 5、`addMapping(loc,name?)`根据节点的`起始位置`和变量名，将映射信息添加到源码映射中
 
-6、调用`advancePositionWithMutatio`n函数来根据生成的代码`更新位置信息`，以便在源码映射中记录正确的位置
+6、调用`advancePositionWithMutation`函数来根据生成的代码`更新位置信息`，以便在源码映射中记录正确的位置
 
 7、addMapping(node.loc.end)根据节点的`结束位置`，将结束位置的映射信息添加到源码映射中
 
+##### addMapping
+定义：向源代码映射中添加一个映射项，描述了生成代码和源代码之间的关系
+
+目的：将`源代码`和`生成代码`之间的对应关系记录下来，以便后续进行错误跟踪或调试时，可以将错误定位到源代码的具体位置，而不仅仅是生成代码中的位置
+
+original：包含了源代码位置的信息，包括line行号和column列号
+
+generated：包含生成代码位置的信息，也包括line行号和column列号
+
+##### indent
+定义：增加代码的缩进，内部执行`newline`方法，添加一个换行符，以及两倍indentLevel对应的空格来表示缩进的长度
+
+##### newline
+定义：给上下文添加一个换行符`\n`
+
+##### deindent
+定义：减少代码的缩进，`withoutNewLine变量`表示是否在缩进的同时添加新的换行符
+
+- withoutNewLine为true：表示缩进的同时不需要添加新的换行符，
+- withoutNewLine为false：表示减少缩进的同时需要添加新的换行符
+
+#### genModulePreamble 生成预设代码
+目的：生成模块的`引导部分`，包括导入相关的辅助函数、组件等，以及一些模块级别的代码块，这些代码片段将在模块加载时执行，为模板编译器的运行
+提供必要的环境和依赖
+
+#### 生成渲染函数
+1、push生成渲染函数的起始部分
+```typescript
+    code.push(`function render(h) {`)
+    code.push(`  return h(`)
+```
+
+2、递归遍历抽象语法树，生成虚拟DOM节点
+
+3、生成渲染函数的结束部分
+```typescript
+    code.push(`  )`)
+    code.push(`}`)
+```
