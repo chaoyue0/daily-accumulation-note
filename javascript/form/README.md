@@ -176,3 +176,82 @@ option标签，HTMLOptionElement类型的属性和方法：
     其他表单字段会在自己的值改变后出发change事件，然后字段失去焦点，选择框会在选中一项时立即触发change事件
 
 ### 选项处理
+1、对于`只允许选择一项`的选择框，通过`selectedIndex属性`可以获取选项，并且可以获取关于选项的所有信息
+
+2、默认选中选择项，通过`selected属性`为true表示`选中`
+
+    如果修改单选框中选项的selected属性，则其他选项会被移除；修改多选框不会移除其他选项，可以动态选择任意多个选项
+
+### 添加选项
+#### DOM
+使用js动态创建选项并将它们添加到选择框中
+```typescript
+let newOption = document.createElement("option");
+newOption.appendChild(document.createTextNode("Option text"));
+newOption.setAttribute("value", "Option value");
+selectbox.appendChild(newOption); 
+```
+
+#### Option 构造函数
+使用Option构造函数创建新的选项，Option函数接收两个参数：text和value，其中value是可选的
+```typescript
+let newOption = new Option("Option text", "Option value");
+selectbox.appendChild(newOption);
+```
+
+#### add 方法
+使用选择框的add()方法，接收两个参数：要添加的新选项和要添加到其前面的参考选项
+
+    如果要在末尾添加选项，则第二个参数是null
+```typescript
+let newOption = new Option("Option text", "Option value");
+selectbox.add(newOption, undefined); // 最佳方案
+```
+
+### 移除选项
+#### DOM
+使用DOM的removeChild()方法并传入要移除的选项
+```typescript
+selectbox.removeChild(selectbox.options[0]); // 移除第一项
+```
+
+#### remove 方法
+使用选择框的remove()方法，接收一个参数：要移除选项的索引
+```typescript
+selectbox.remove(0); // 移除第一项
+```
+
+#### null
+直接将选项设置为null
+```typescript
+selectbox.options[0] = null; // 移除第一项
+```
+
+#### 移除所有选项
+使用迭代所有选项并逐一移除它们，移除第一项会自动将所有选项往前移一位
+```typescript
+function clearSelectbox(selectbox) {
+ for (let option of selectbox.options) {
+ selectbox.remove(0);
+ }
+} 
+```
+
+### 移动和重排选项
+使用appendChild()方法可以直接将选项从第一个选择框移动到第二个选择框，常用于将选项移动到最后
+
+使用insertBefore()方法可以将选项移动到选择框中的特定位置
+
+## 富文本编辑
+定义：将空白文档变成`可编辑`的，实际编辑的是body元素的HTML
+
+技术点：在空白HTML文件中嵌入一个iframe，通过`designMode属性`设置为on，整个文档会变成可编辑的(显示插入光标)
+
+    只有在文档完全加载之后才可以设置designMode属性，需要使用onload事件处理程序
+
+### contentEditable
+给页面中的任何元素指定contenteditable属性，然后该元素会立即被用户编辑，不需要额外的iframe、空页面和js
+
+通过设置contentEditable属性，可以随时切换元素的可编辑状态
+
+### 与富文本交互
