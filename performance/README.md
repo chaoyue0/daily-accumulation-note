@@ -17,6 +17,25 @@
 ```
 ##### 定向搜索
 配置`resolve`提高文件的搜索速度,alias映射模板路径，extensions表明文件后缀
+```
+  resolve: {
+    alias: {
+        '@':'C:\\Users\\jiayu01\\WebstormProjects\\fba_admin_vue3\\src',
+         vue$:'vue/dist/vue.runtime.esm-bundler.js'
+    }
+,
+    extensions: [
+        '.tsx',
+        '.ts',
+        '.mjs',
+        '.js',
+        '.jsx',
+        '.vue',
+        '.json',
+        '.wasm'
+    ],
+}
+```
 ##### 并行构建
 配置`Thread`将Loader单进程转换为多进程，释放CPU多核并发的优势
 
@@ -43,8 +62,17 @@
 ###### 将PNPM包拆分为体积适中的chunk
 vue cli默认的webpack配置已经完成了此项配置，移除了node_module包中的重复模块
 ##### 摇树优化
+使用`import`导入模块，使用`export`导出模块 
+
+    Tree Shaking在生产环境下默认启动
+
+如果想在开发环境启动Tree Shaking，需要配置optimization.usedExports为true，在 Webpack 编译过程中启动标记功能
+
+原理：它会将每个模块中没有被使用过的导出内容标记为`unused`，当生成产物时，被标记的变量对应的导出语句会被删除
 ##### 动态垫片
+polyfill：降级\替代方案，指可以将ES6+的API转换成在低版本的浏览器上可以实现相同功能的替换实现
 ##### 按需加载
+将路由页面、触发性功能单独打包为一个文件，使用时才加载，减轻首屏渲染的负担
 ##### 作用提升
 ##### 压缩资源
 ###### html压缩
@@ -59,11 +87,95 @@ optimize-css-assets-webpack-plugin插件，可以压缩css
 terser-webpack-plugin插件，可以压缩js
 
     在webpack v5中是开箱即用的，如果需要自定义配置的话需要引入该插件
-
+```
+ new TerserPlugin(
+        {
+          terserOptions: {
+            compress: {
+              arrows: false,
+              collapse_vars: false,
+              comparisons: false,
+              computed_props: false,
+              hoist_funs: false,
+              hoist_props: false,
+              hoist_vars: false,
+              inline: false,
+              loops: false,
+              negate_iife: false,
+              properties: false,
+              reduce_funcs: false,
+              reduce_vars: false,
+              switches: false,
+              toplevel: false,
+              typeofs: false,
+              booleans: true,
+              if_return: true,
+              sequences: true,
+              unused: true,
+              conditionals: true,
+              dead_code: true,
+              evaluate: true
+            },
+            mangle: {
+              safari10: true
+            }
+          },
+          parallel: true,
+          extractComments: false
+        }
+      )
+```
 
 ### 图像策略
+#### 图像选型
+了解所有图像类型的特点及其其何种应用场景最合适
+
+| 类型       | 体积 | 质量 | 兼容性 | 请求 | 压缩   | 透明  | 场景                                 |
+|----------|----|----|-----|----|------|-----|------------------------------------|
+| JPG\JPEG | 小  | 中  | 好   | 是  | 有损压缩 | 不支持 | 色彩丰富图、背景图、头像<br />(不适合含文字图像，影响可读性) |
+| PNG      | 大  | 高  | 好   | 是  | 无损压缩 | 支持  | 信息图表以及包含图像和文本的图形、屏幕截图              |
+| WebP     | 小  | 中  | 差   | 是  | 有损、无损压缩 | 支持  | JPEG和PNG文件最佳替代格式，可节省带宽并提升网站加载速度    |
+| SVG      | 小  | 高  | 好   | 是  | 无损压缩 | 支持  | logo、矢量图，不建议复杂图像                   |
+#### 图像压缩
+在部署到生产环境前使用工具或脚本对其压缩处理
+
+常用的工具：QuickPicture、TinyPng
+
 ### 分发策略
+主要围绕`内容分发网络`做相关处理，购买CDN服务
+
+原理：一组分布在各地存储数据副本并可根据`就近原则`满足数据请求的服务器，核心是`缓存`和`回源`
+
+- 缓存:是把资源复制到CDN服务器里
+- 回源：资源过期\不存在就向上层服务器请求并复制到CDN服务器里
+
+
+    所有静态资源走CND：开发阶段确定哪些文件属于静态资源(不常变化的样式文件、脚本文件和多媒体文件，如字体、图像、音频、视频)
 ### 缓存策略
+主要围绕浏览器缓存
+
+## 渲染层面
+### css策略
+
+- 避免出现超过三层的嵌套规则
+- 避免为ID选择器添加多余选择器
+- 避免使用标签选择器代替类选择器
+- 避免重复匹配重复定义，关注可继承属性
+### DOM策略
+
+- 缓存DOM计算属性
+- 避免过多DOM操作
+### 阻塞策略
+
+- 脚本与DOM的依赖关系很强，对script标签设置defer
+- 脚本与DOM的依赖关系不强，对script标签设置async
+### 回流重绘策略
+
+- 使用类合并样式，避免逐条改变样式
+- 使用display控制DOM显示隐藏，将DOM离线化，而不是改变DOM树
+- 缓存DOM计算属性
+### 异步更新策略
+在异步任务中修改DOM时，把其包装成微任务(promise、nextTick)
 
 ## 优化标准
 目的：希望降低程序的`整体开销`，应该把重点放在对程序`整体开销影响最大`的那部分上
