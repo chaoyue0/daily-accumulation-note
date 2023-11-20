@@ -3,7 +3,7 @@
 
 ## 网路层面
 ### 构建策略
-主要围绕webpack做相关处理
+主要围绕webpack做相关处理，常见的优化就是拆包、分块、压缩等
 #### 减少打包时间
 ##### 缩减范围
 配置`include/exclude`缩小Loader对文件的搜索范围，可以避免不必要的编译
@@ -39,7 +39,10 @@
 ##### 并行构建
 配置`Thread`将Loader单进程转换为多进程，释放CPU多核并发的优势
 
-使用thread-loader开启多线程
+使用`thread-loader`开启多线程，开启一个线程的处理时间`600ms`(仅在耗时的loader上使用)，使用方法只要把thread-loader放置在其他loader之前，
+这样thread-loader之后的loader就会在一个单独的`worker池`中运行
+
+    产生的worker数量，默认是cpu核心数 - 1
 ##### 可视结构
 配置`BundleAnalyzer`分析打包文件结构，直观分析打包文件的模块组成部分、模块体积占比、模块包含关系、模块依赖关系、文件是否重复、压缩体积对比等可视化数据
 
@@ -73,7 +76,6 @@ vue cli默认的webpack配置已经完成了此项配置，移除了node_module�
 polyfill：降级\替代方案，指可以将ES6+的API转换成在低版本的浏览器上可以实现相同功能的替换实现
 ##### 按需加载
 将路由页面、触发性功能单独打包为一个文件，使用时才加载，减轻首屏渲染的负担
-##### 作用提升
 ##### 压缩资源
 ###### html压缩
 html-wepack-plugin插件，可以压缩html
@@ -87,44 +89,6 @@ optimize-css-assets-webpack-plugin插件，可以压缩css
 terser-webpack-plugin插件，可以压缩js
 
     在webpack v5中是开箱即用的，如果需要自定义配置的话需要引入该插件
-```
- new TerserPlugin(
-        {
-          terserOptions: {
-            compress: {
-              arrows: false,
-              collapse_vars: false,
-              comparisons: false,
-              computed_props: false,
-              hoist_funs: false,
-              hoist_props: false,
-              hoist_vars: false,
-              inline: false,
-              loops: false,
-              negate_iife: false,
-              properties: false,
-              reduce_funcs: false,
-              reduce_vars: false,
-              switches: false,
-              toplevel: false,
-              typeofs: false,
-              booleans: true,
-              if_return: true,
-              sequences: true,
-              unused: true,
-              conditionals: true,
-              dead_code: true,
-              evaluate: true
-            },
-            mangle: {
-              safari10: true
-            }
-          },
-          parallel: true,
-          extractComments: false
-        }
-      )
-```
 
 ### 图像策略
 #### 图像选型
@@ -140,7 +104,6 @@ terser-webpack-plugin插件，可以压缩js
 在部署到生产环境前使用工具或脚本对其压缩处理
 
 常用的工具：QuickPicture、TinyPng
-
 ### 分发策略
 主要围绕`内容分发网络`做相关处理，购买CDN服务
 
@@ -151,7 +114,6 @@ terser-webpack-plugin插件，可以压缩js
 
 
     所有静态资源走CND：开发阶段确定哪些文件属于静态资源(不常变化的样式文件、脚本文件和多媒体文件，如字体、图像、音频、视频)
-
 ### 缓存策略
 主要围绕浏览器缓存
 
@@ -177,6 +139,44 @@ terser-webpack-plugin插件，可以压缩js
 - 缓存DOM计算属性
 ### 异步更新策略
 在异步任务中修改DOM时，把其包装成微任务(promise、nextTick)
+
+## 开发层面
+
+### 自动刷新
+#### 监听文件变更
+##### 方式一 webpack.config.js
+在webpack.config.js中设置`watch: true`
+
+原理：递归解析出entry文件所依赖的文件，把这些依赖的文件加入到监听列表，而不是直接监听项目目录下的所有文件，
+定时的不停地去获取文件的最后编译时间，每次都存下最后编译时间，如果发现获取的和最后一次保存的编译时间不一致，就认为文件发生了变化，
+监听到文件发生变化时，不会自立即告诉监听者，先缓存起来，收集一段时间的变化后，再一次性告诉监听者，防止文件更新太快导致编译频繁，程序构建卡死
+
+watchOptions：
+
+- ignored：不监听的文件或文件夹，支持正则匹配
+- poll：控制定时检查的周期，默认是1000ms
+- aggregateTimeout：配置等待时间，默认300ms
+
+##### 方式二 打包命令
+在执行启动 Webpack 命令时，带上 `--watch` 参数，完整命令是 webpack --watch
+
+#### 监听浏览器自动更新
+
+### 模块热替换
+不刷新整个网页的情况下做到超灵敏的实时预览
+
+#### 方式一 webpack.config.js
+安装HotModuleReplacementPlugin插件，在devServer配置项下增加`hot: true`属性
+
+#### 方式二 打包命令
+在执行启动 Webpack 命令时，带上 `--hot` 参数，完整命令是webpack-dev-server --hot
+
+### 热模块替换与自动更新
+
+- 相同点：向网页注入一个代理服务器的方式，连接devServer及网页
+- 不同点：
+  - 自动更新：网页自动刷新
+  - 热模块替换：模块替换机制
 
 ## 优化标准
 目的：希望降低程序的`整体开销`，应该把重点放在对程序`整体开销影响最大`的那部分上
