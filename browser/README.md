@@ -48,6 +48,7 @@ https在http的基础上增加SSL组成了以安全为目标的http通道；
 4、A使用自己的私钥解密信息，得到`对称密钥`；(非对称加密使用私钥解密得到原始信息)
 
 5、双方通过后，使用对称密钥进行通信；
+
 ### 状态码
 #### 304 协商缓存
 定义：当客户端发送带有缓存验证信息的请求时，服务器可以通过返回304表示请求的资源未发送改变，
@@ -114,3 +115,49 @@ Cache-Control字段：（response header）
 2、再次请求，带着`资源标示`（If-Modified-Since或If-None-Match）
 
 3、服务器返回状态码
+
+### 断网处理
+
+#### js监听网络状态
+
+##### navigator.onLine
+用于检测浏览器是否联网，true表示online，false表示offline 
+
+##### navigator.connection
+用于检测网络状况，判断当前网络流畅、拥堵、繁忙，属性包含effectiveType、rtt、downlink
+
+- effectiveType：4g、3g、2g、4g(rtt、downlink均为0)，分别表示online、fast 3g、slow 3g和offline
+- rtt：连接预估往返时间，单位是ms，值越小网速越快
+- downlink：带宽预估值，单位是Mbit/s，值越大(可传输的数量越多)网速越快
+
+##### change 事件
+用于监听网速变化并作出响应处理的事件
+
+    const connection = navigator.connection；
+    connection.addEventListener('change', updateConnectionStatus);
+
+##### offline和online 事件
+分别用于监听断网和联网情况并作出相应处理
+
+    window.addEventListener('online',  updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+
+##### 页面重载
+网络关闭时需要在offline事件中提示用户，网络重连后，可以在online事件中重新加载当前页面
+
+    location.reload()
+
+#### WebSocket心跳及重连机制
+心跳机制：每隔一段时间向服务器发送一个数据包，告诉服务器自己还活着；服务器回传一个数据包给客户端，告诉客户端自己还活着，如果没有则有可能是网络断开连接了
+
+重连机制：`onmessage事件`能监听到的话，说明请求正常，使用了一个`定时器`，每隔3秒的情况下，如果是网络断开的情况下，在指定的时间内服务器端并没有返回心跳响应消息，因此服务器端断开了，
+我们使用`ws.close关闭连接`，在一段时间后可以通过`onclose事件`监听到。因此在onclose事件内，我们可以调用`reconnect事件`进行重连操作。
+
+##### WebSocket 与 HTTP的区别
+
+- WebSocket持久连接，http是短链接
+- WebSocket协议以ws/wss开头，http以http/https
+- WebSocket是有状态的，http是无状态的
+- WebSocket建立连接后客户端和服务器可以双向发送消息，http只能客户端发起请求，服务器返回数据
+- WebSocket可以跨域
+- WebSocket建立连接后，数据的传输使用帧来传输，不需要request消息
