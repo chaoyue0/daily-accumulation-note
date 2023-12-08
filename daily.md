@@ -148,7 +148,6 @@
 - get： 访问该属性时，调用get函数
 - set： 该属性被赋值时，调用set函数
 
-
 ### Object.getOwnPropertyNames
 定义：接受参数是一个对象，返回一个数组，包含给定对象所有自有属性(包含不可枚举属性，但不包括使用symbol值作为名称的属性以及原型链上的属性)
 
@@ -157,3 +156,25 @@
 Object.getOwnPropertyNames("foo");
 // ["0", "1", "2", "length"] 
 ```
+
+### vue keep-alive
+bug：缓存组件，没有key值无法按需删除删除组件，只有达到max值后按照队列的方式删除前段组件
+
+### require和import区别
+
+#### 调用时间
+
+- require：`运行时`调用，理论上可以运作在代码的任何地方
+- import：`编译时`调用，必须放在文件的开头
+
+#### 本质
+
+- require：赋值过程，require的结果就是对象、数值、字符串、函数等，就是普通值的拷贝传递(存在浅拷贝的情况)
+- import：解构过程，使用import导入模块的属性或方法是引用传递，且import是read-only的，值是单向传递的
+
+#### 语法
+
+- require：导出的时候需要使用module.export后面跟着一个对象
+- import：导出直接使用export，export的是一个对象(即便导出的是基本类型的数据)
+
+### async、await优越之处
