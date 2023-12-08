@@ -215,3 +215,20 @@ var func = (x, y) => {
 
 ## class
 定义：es6中新加入的继承机制，实际是js关于`原型继承机制`的语法糖，本质上是对原型继承的封装
+
+## new
+```typescript
+function newOperator(Ctor, ...args) {
+  if (typeof Ctor !== 'function') {
+    throw new TypeError('First argument is not a constructor')
+  }
+  // 1. 创建一个全新对象，并将该对象原型指向构造函数的原型对象
+  const obj = Object.create(Ctor.prototype)
+
+  // 2. 将构造函数调用的this指向这个新对象，并执行构造函数；
+  const result = Ctor.apply(obj, args)
+
+  // 3. 如果构造函数执行结果为对象类型，则返回执行结果，否则返回创建的新对象
+  return (result instanceof Object) ? result : obj
+}
+```
