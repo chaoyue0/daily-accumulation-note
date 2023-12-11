@@ -60,6 +60,45 @@ app.get('/', function(req, res){
 });
 ```
 
+## path模块
+是node用于处理文件\目录路径的内置模块，node中所有的模块都需要require在文件顶部导入
+
+```javascript
+const path = require("path");
+```
+### basename 获取路径基础名
+path.basename(path, ?ext):path路径的最后一部分
+
+- path和ext必须为字符串
+- ext和文件名后缀匹配上返回值会省略文件后缀
+- path尾部的目录分隔符会被忽略
+
+### dirname 获取路径目录名
+path.dirname(path):path路径的目录名
+
+- path必须为字符串
+- path尾部的目录分隔符会被忽略
+
+### extname 获取路径扩展名
+path.extname(path)
+
+### parse 解析路径
+path.parse(path)：带有(dir根目录,root文件所在文件夹,base完整文件,name文件名,ext后缀名)的对象
+
+### join 拼接路径
+path.join([...paths]):平台特定的分隔符作为定界符将所有path片段连接在一起生成的路径
+
+### normalize 规范化路径
+path.normalize(path):规范后的路径字符串
+
+### resolve 解析为绝对路径
+从右往左的顺序一次解析，直到构造出一个绝对路径，否则会将当前工作目录加在路径开头
+
+### 全局变量
+
+- __dirname：表示当前执行文件所在目录的`完整目录名`
+- __filename：表示当前执行文件的`完整文件名`
+
 ## 配置路由
 
 ## 模板引擎
