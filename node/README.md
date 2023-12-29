@@ -2,6 +2,35 @@
 原理：基于Chrome V8引擎构建的，由事件循环分发I/O任务，最终会工作线程(Work Thread)将任务丢到线程池(Thread Pool)里去执行，
 而事件循环只要等到执行结果即可
 
+## 基础知识
+
+### 函数传递
+一个函数(`匿名函数`)可以作为变量在另一个函数的参数中进行传递
+```javascript
+function say(word) {
+  console.log(word);
+}
+
+function execute(someFunction, value) {
+  someFunction(value);
+}
+
+execute(say, "Hello");
+
+//----------------------------
+
+function execute(someFunction, value) {
+    someFunction(value);
+}
+
+execute(function(word){ console.log(word) }, "Hello");
+```
+
+## 工作方式
+
+### 基于事件驱动的回调
+创建了服务器，并且向创建它的方法传递了一个函数。无论何时我们的服务器收到一个请求，这个函数就会被调用
+
 ## Express 
 ### Middleware 中间件
 定义：将具体的业务逻辑和底层逻辑解耦的组件，即中间件是能够适用多个应用场景、可复用性良好的代码
