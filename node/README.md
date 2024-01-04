@@ -26,6 +26,28 @@ function execute(someFunction, value) {
 execute(function(word){ console.log(word) }, "Hello");
 ```
 
+### 阻塞与非阻塞
+在不新增额外线程的情况下，对任务进行并行处理，也就是Node是单线程的
+
+#### exec
+定义：创建子进程的函数，属于Node模块child_process
+
+参数：command终端要运行的命令；回调函数作为参数，回调函数有三个参数分别是err、stdout、stderr
+
+```javascript
+export function useExec(shell: string) {
+  return new Promise((res, rej) => {
+    exec(shell, (err, stdout, stderr) => {
+      if (err) rej(err);
+      res({
+        stdout,
+        stderr,
+      });
+    });
+  });
+}
+```
+
 ## 工作方式
 
 ### 基于事件驱动的回调
