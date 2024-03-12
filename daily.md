@@ -177,4 +177,8 @@ bug：缓存组件，没有key值无法按需删除删除组件，只有达到ma
 - require：导出的时候需要使用module.export后面跟着一个对象
 - import：导出直接使用export，export的是一个对象(即便导出的是基本类型的数据)
 
-### async、await优越之处
+### webpack 和 vite 的区别
+
+- webpack 是将所有的模块打包成一个 bundle 文件；而vite在开发模式下没有打包的过程，引用ES Module Import特征，只有在需要才编译文件，在生产模式下采用rollup打包更好的引入tree-shaking
+- webpack全局热更新修改一次很小的改动都会重新编译整个应用；vite增量热更新，只修改更新的部分
+- webpack 有更活跃的插件市场，扩展性更强
