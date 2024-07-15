@@ -65,6 +65,27 @@ svg：通过`path：//`绘制矢量路径，支持颜色、大小动态变化
 - axisTick：坐标轴刻度
 - axisLabel：坐标轴标签
 
-## series 多系列
+### series 多系列
 
 series 数组只有一个对象，多系列情况用 data 数组划分
+
+## 排名图
+
+- 柱状图横向排布：将 y 轴作为类目轴 yAxis type: 'category'
+
+- label 位于柱状图上方
+
+  - icon + name：yAxis-axisLabel rich-padding 设置偏移量
+  - value：series-labelLayout 手动设置标签的 x，y 坐标
+
+- formatter：不同名次显示不同的效果
+
+### 难点
+
+- icon 的偏移，直接使用 padding 会影响 icon 自身的效果，使用 margin 可以进行左右偏移无法上下偏移
+
+- 制作一张偏移好位置的 svg 大图，但 FFCreator 不支持图片的引入（本质是不支持 new Image 的写法）
+
+- 使用 markPoint，symbol 支持 svg 路径的写法，但是 markPoint 原本的作用是显示极值点或平均值
+
+- 使用 markPoint 的 data，可以手动配置多个标记，配合坐标 coord 可以配置 symbolOffset 属性
