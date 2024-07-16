@@ -89,3 +89,11 @@ series 数组只有一个对象，多系列情况用 data 数组划分
 - 使用 markPoint，symbol 支持 svg 路径的写法，但是 markPoint 原本的作用是显示极值点或平均值
 
 - 使用 markPoint 的 data，可以手动配置多个标记，配合坐标 coord 可以配置 symbolOffset 属性
+
+## 折线图
+
+### 零点多色
+
+- type：piecewise
+
+- pieces：自定义分段文字以及样式
