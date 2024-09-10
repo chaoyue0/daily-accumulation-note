@@ -4,6 +4,8 @@
 
 使用 opengl 来处理图形渲染并使用 shader 后处理来生成转场效果，最后使用 FFmpeg 合成视频
 
+### 对象池
+
 ## 使用
 
 - 入口 creator
@@ -23,6 +25,16 @@
 const creator = new FFCreator({...配置项})
 ```
 
+- cacheDir 缓存目录
+- outputDir 输出目录
+- output：输出文件名
+- width
+- height
+- cover：设置封面
+- audioLoop：音乐是否循环
+- fps：帧率，表示每秒播放的帧数
+- threads：多线程并行渲染
+
 #### FFScene 创建场景
 
 ```
@@ -32,15 +44,23 @@ const scene = new FFScene();
 creator.addChild(scene); // 挂载到入口上
 ```
 
+- setBgColor：设置背景色
+- setTransition：设置停留时长
+- setTransition：设置过渡动画（类型，时间）
+
 #### FFImage 创建图片元素
 
 ```
-//也可以把参数放到构造函数配置项中
 const img = new FFImage({path: imgpath});
-// 调用方法设置图片的位置以及效果
-...
 scene.addChild(img); // 挂载到场景上
 ```
+
+- setXY：设置位置
+- setScale：设置缩放
+- setRotate：设置旋转
+- setOpacity：设置透明度
+- setWH：设置宽高
+- addEffect：设置动画效果
 
 #### FFAlbum 创建相册元素
 
@@ -48,8 +68,6 @@ scene.addChild(img); // 挂载到场景上
 const album = new FFAlbum({
   list: [img1, img2, img3, img4], // 相册合集
 })
-// 调用方法设置相册的切换动画以及停留时长
-...
 scene.addChild(album);// 挂载到场景上
 ```
 
@@ -71,19 +89,21 @@ const text = new FFText({text: '这是一个文字', x: 250, y: 80});
 const subtitle = new FFSubtitle({
   comma: true,                  // 是否逗号分割
 })
-subtitle.frameBuffer = 24;      // 缓存帧
-scene.addChild(subtitle);
-subtitle.setSpeech(dub);        // 设置语音配音-tts
 ```
+
+- setText：设置文案
+- frameBuffer = 24; 缓存帧
+- setSpeech(dub); 设置语音配音-tts
+- setDuration：设置字幕总时长
 
 #### FFVideo 创建视频元素
 
 ```
 const video = new FFVideo({})
-video.setAudio(true);                   // 是否有音乐
-video.setTimes('00:00:43', '00:00:50'); // 截取播放时长
-scene.addChild(video);
 ```
+
+- setAudio(true); // 是否有音乐
+- setTimes('00:00:43', '00:00:50'); // 截取播放时长
 
 #### FFVtuber 创建虚拟主播
 
@@ -110,6 +130,11 @@ creator.addVtuber(vtuber);
 
 #### 添加事件监听
 
+- start：实例开始工作
+- error：发生错误
+- progress：处理过程中
+- complete：处理完成
+
 通过 on 监听
 
 - 参数 1：事件名
@@ -118,6 +143,8 @@ creator.addVtuber(vtuber);
 ### 多任务处理
 
 #### FFCreatorCenter 添加任务
+
+针对多个制作任务，进行任务队列管理
 
 ```
 const taskId = FFCreatorCenter.addTask(() => {
