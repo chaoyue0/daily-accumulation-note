@@ -219,6 +219,5 @@ scene.setTransition({
 });
 ```
 
-## 数据可视化
+## Command 命令
 
-### FFChart 组件
