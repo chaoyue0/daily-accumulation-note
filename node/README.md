@@ -1,6 +1,11 @@
 # node
 
-原理：基于 Chrome V8 引擎构建的，由事件循环分发 I/O 任务，最终工作线程(Work Thread)将任务丢到线程池(Thread Pool)里去执行，而事件循环只要等到执行结果即可
+## 原理
+基于 Chrome V8 引擎构建的，由事件循环分发 I/O 任务，最终工作线程(Work Thread)将任务丢到线程池(Thread Pool)里去执行，而事件循环只要等到执行结果即可
+
+## 核心概念
+- Chrome V8：解析并执行js代码
+- libuv：由事件循环和线程池组成，负责所有 I/O 任务的分发与执行
 
 ## 基础知识
 
@@ -158,18 +163,15 @@ Node 以 8kb 为界限来区分是小对象还是大对象
 
 创建了服务器，并且向创建它的方法传递了一个函数。无论何时我们的服务器收到一个请求，这个函数就会被调用
 
-## Express
+## Express 框架
 
 ### Middleware 中间件
 
-定义：将具体的业务逻辑和底层逻辑解耦的组件，即中间件是能够适用多个应用场景、可复用性良好的代码
+定义：处理http请求的函数，可以访问请求对象、响应对象和下一个中间件函数，按照定义的顺序依次执行，核心作用是通过链式调用对请求进行分层处理
 
 参数：request(http 请求)、response(http 响应)、next(代表下一个中间件)
 
-特点：每个中间件都可以对 http 请求进行加工，并且决定是否调用 next 方法，将 request 对象传给下一个中间件
-
-    next如果带有参数，则表示抛出一个错误，参数为错误文本，抛出错误以后，后面的中间件将不再执行，直到发现一个错误处理函数为止
-
+- next如果带有参数，则表示抛出一个错误，参数为错误文本，抛出错误以后，后面的中间件将不再执行，直到发现一个错误处理函数为止
 - 中间件是按照顺序执行的，配置中间件的顺序非常的重要
 - 中间件在执行内部逻辑的时候可以选择将请求传递给下一个中间件，也可以直接返回用户响应
 
@@ -178,79 +180,15 @@ Node 以 8kb 为界限来区分是小对象还是大对象
 - 为了用`串行化流程`让几个异步任务按顺序执行，需要先把这些任务按预期的执行顺序放到一个数组中(起到`队列`的作用)
 - 每个任务都是一个函数，任务完成后调用处理器函数，告知错误状态和结果(`next函数`)
 
-```javascript
-function next(err, result) {
-  if (err) throw err
-  var currentTask = tasks.shift()
-  if (currentTask) currentTask(result)
-  next()
-}
-```
+#### 分类
+- 应用级中间件：绑定到整个应用，app.use()
+- 路由级中间件：绑定特定路由，router.use()
+- 错误处理中间件：捕获并处理错误
+- 内置中间件：解析json格式的请求体，express.json()
 
-    异步串行方案还可以使用promise的then链、async\await、yeild等
-
-### express 方法
-
-#### use
-
-定义：是 express 注册中间件的方法，返回一个函数
-
-    use方法也允许将请求网址写在第一个参数，表示只有请求路径匹配这个参数，后面的中间件才会生效
-
-#### http 动词
-
-get、post、put、delete 方法
-
-第一个参数都是请求的路径，第二个参数包含请求和响应的回调函数
-
-#### set
-
-用于指定变量的值，两个参数分别为 key 和 value
-
-#### response
-
-##### redirect
-
-允许网址的重定向
-
-```javascript
-response.redirect('http://www.example.com')
-```
-
-##### sendFile
-
-用于发送文件
-
-```javascript
-response.sendFile('/path/to/anime.mp4')
-```
-
-##### render
-
-用于渲染网页模板
-
-#### request
-
-##### ip
-
-用于获取 http 请求的 ip 地址
-
-##### files
-
-用于获取上传的文件
-
-##### http 头信息
-
-要指定 http 头信息，回调函数就必须换一种写法，要使用 setHeader 方法和 end 方法
-
-```javascript
-app.get('/', function (req, res) {
-  var body = 'Hello World'
-  res.setHeader('Content-Type', 'text/plain')
-  res.setHeader('Content-Length', body.length)
-  res.end(body)
-})
-```
+#### 使用
+- app.use(req,res,next)，单独写处理函数
+- app.get('/', funArrays, (req, res)，多个处理函数写在funArrays中
 
 ### path 模块
 
@@ -386,10 +324,34 @@ app.get('/', function (req, res) {
 {{/each}}
 ```
 
-## config-lite
+### API
+#### express
+- express.json：解析传入请求为json
+- express.raw：解析传入的请求为buffer
+- express.text：解析传入的请求为字符串
+- express.router；创建路由对象，可以将中间件和http方法添加到路由
+- express.static：提供静态文件，包括图像、css、js文件
+、、
 
-轻量的读取配置文件的模块
+#### app
+##### 模块化
+- app.on('mount', (parent) => {})：获取父应用的配置项和挂载路径
 
-## mongoose
+##### http
+- app.get
+- app.post
+- app.all：匹配所有http动词，仅对精确路由生效，不会子路径，中间件的全局处理，如日志记录或验证
 
-nodejs 提供连接 mongodb 的库，对 node 环境中 MongoDB 数据库操作的封装，一个对象模型工具
+##### 路由
+- app.param：处理路由参数，验证参数合法性
+- app.path：返回应用的规范路径
+- app.route：
+
+##### 视图
+- app.render(view, locals, callback)：配合模板文件渲染html，locals为传递给模板的变量数据对象
+
+#### req
+
+#### res
+
+#### router
